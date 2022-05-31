@@ -13,7 +13,7 @@ class UpdateCategoriaRequest extends FormRequest
      */
     public function authorize()
     {
-        return trç;
+        return true;
     }
 
     /**

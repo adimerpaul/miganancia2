@@ -27,6 +27,7 @@ export default boot(({ app ,store}) => {
       store.commit("login/categorias_request",res.data)
     })
     app.config.globalProperties.$api.get('producto').then(res=>{
+      // console.log(res.data)
       store.commit("login/productos_request",res.data)
     })
     app.config.globalProperties.$api.post('me').then(res=>{

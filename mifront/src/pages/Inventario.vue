@@ -2,7 +2,7 @@
   <q-page class="q-pa-xs">
     <div class="row">
       <div class="col-8">
-        <q-input dense outlined label="Buscar producto..." hint="Recuerda ingresar al menos 3 caracteres para iniciar tu búsqueda." counter clearable v-model="filterProducto">
+        <q-input dense outlined label="Buscar producto..." hint="Recuerda ingresar al menos 3 caracteres para iniciar tu búsqueda." counter clearable v-model="filterProducto" @update:model-value="buscarProducto">
           <template v-slot:prepend>
             <q-icon name="search" />
           </template>
@@ -41,7 +41,7 @@
         <q-btn @click="clickUpdateCategoria" class="full-width full-height" label="Editar categorías" icon="o_edit" outline no-caps/>
       </div>
       <div class="col-12 col-sm-3 q-pa-xs flex flex-center">
-        <q-select class="full-width full-height text-bold" dense :options="optionsCategoriasVer" v-model="categoriaver" outlined />
+        <q-select class="full-width full-height text-bold" dense :options="optionsCategoriasVer" v-model="categoriaver" outlined @update:model-value="buscarPorCategoria"/>
       </div>
       <div class="col-12 col-sm-6 q-pa-xs flex flex-center">
         <q-select
@@ -65,7 +65,44 @@
         </q-select>
       </div>
       <div class="col-12">
-        <div class="row" v-if="$store.getters['login/productos'].length>0">
+
+<!--        <div class="row" v-else-if="optionsCategoriasVer.label!='Ver todas las categorias' && productos.length==0">-->
+<!--          <div class="col-2" v-for="p in productos" :key="p.id">-->
+<!--            <q-card @click="clickDetalleProducto(p)">-->
+<!--              <q-img :src="url+'../imagenes/'+p.foto" width="100%" height="100px">-->
+<!--                <div class="absolute-bottom text-center text-subtitle2">-->
+<!--                  {{p.nombre}}-->
+<!--                </div>-->
+<!--              </q-img>-->
+<!--              <q-card-section class="q-pa-none q-ma-none">-->
+<!--                <div class="text-center text-subtitle2">{{ p.precio }} Bs</div>-->
+<!--                <div :class="p.cantidad<=0?'text-center text-bold text-red':' text-center text-bold'">{{ p.cantidad }} {{ $q.screen.lt.md?'Dis':'Disponible' }}</div>-->
+<!--              </q-card-section>-->
+<!--            </q-card>-->
+<!--          </div>-->
+<!--        </div>-->
+        <q-card v-if="categoriaver.label!='Ver todas las categorias' && productos.length==0" flat>
+          <q-card-section>
+            <div class="row">
+              <div class="col-12 flex flex-center">
+<!--                {{productos.length}} productos-->
+<!--                {{optionsCategoriasVer.label}}-->
+                <q-avatar size="150px" font-size="150px" color="white" text-color="grey" icon="view_in_ar" />
+              </div>
+              <div class="col-12">
+                <div class="text-bold text-grey text-center">No encontramos productos para tu búsqueda.</div>
+                <div class="text-bold text-grey text-center">Intenta con otra palabra o agrega productos a tu Inventario.</div>
+              </div>
+              <div class="col-12 col-sm-6 text-center">
+                <q-btn size="lg" color="grey-8" @click="clickCreateProducto" label="Agregar manualmente" outline no-caps />
+              </div>
+              <div class="col-12 col-sm-6 text-center">
+                <q-btn size="lg" text-color="grey-9" color="yellow" label="Subir productos desde Excel" no-caps class="text-black"/>
+              </div>
+            </div>
+          </q-card-section>
+        </q-card>
+        <div class="row" v-else-if="productos.length==0 && $store.getters['login/productos'].length>0">
           <div class="col-2" v-for="p in $store.getters['login/productos']" :key="p.id">
             <q-card @click="clickDetalleProducto(p)">
               <q-img :src="url+'../imagenes/'+p.foto" width="100%" height="100px">
@@ -77,13 +114,25 @@
                 <div class="text-center text-subtitle2">{{ p.precio }} Bs</div>
                 <div :class="p.cantidad<=0?'text-center text-bold text-red':' text-center text-bold'">{{ p.cantidad }} {{ $q.screen.lt.md?'Dis':'Disponible' }}</div>
               </q-card-section>
-              <!--            <q-card-section class="q-pt-none">-->
-              <!--              ssdsd-->
-              <!--            </q-card-section>-->
             </q-card>
           </div>
         </div>
-        <q-card v-else>
+        <div class="row" v-else-if="productos.length>0">
+          <div class="col-2" v-for="p in productos" :key="p.id">
+            <q-card @click="clickDetalleProducto(p)">
+              <q-img :src="url+'../imagenes/'+p.foto" width="100%" height="100px">
+                <div class="absolute-bottom text-center text-subtitle2">
+                  {{p.nombre}}
+                </div>
+              </q-img>
+              <q-card-section class="q-pa-none q-ma-none">
+                <div class="text-center text-subtitle2">{{ p.precio }} Bs</div>
+                <div :class="p.cantidad<=0?'text-center text-bold text-red':' text-center text-bold'">{{ p.cantidad }} {{ $q.screen.lt.md?'Dis':'Disponible' }}</div>
+              </q-card-section>
+            </q-card>
+          </div>
+        </div>
+        <q-card v-else flat>
           <q-card-section>
             <div class="row">
               <div class="col-12 flex flex-center">
@@ -102,6 +151,8 @@
             </div>
           </q-card-section>
         </q-card>
+<!--        <pre>{{productos}}</pre>-->
+<!--        <pre>{{$store.getters["login/productos"]}}</pre>-->
       </div>
     </div>
     <q-dialog v-model="dialogDetalleProducto" position="right" full-height :maximized="true">
@@ -510,38 +561,90 @@
           <q-form class="full-width">
             <div class="row">
               <div class="col-12">
-<!--                <div class="text-caption text-grey">Los campos marcados con asterisco (<span class="text-red">*</span>) son obligatorios</div>-->
-<!--                <q-input placeholder="Buscar categoría" outlined dense>-->
-<!--                  <template v-slot:append>-->
-<!--                    <q-icon name="search"></q-icon>-->
-<!--                  </template>-->
-<!--                </q-input>-->
                 <q-table :filter="filtercategoria" flat bordered hide-header hide-bottom :rows="$store.getters['login/categorias']" :columns="columnsproducto">
                   <template v-slot:top>
-                    <q-input  dense outlined clearable counter hint="Buscar categoria" v-model="filtercategoria" placeholder="Buscar categorías" class="full-width">
+                    <q-input  dense outlined clearable counter hint="Buscar categoría" v-model="filtercategoria" placeholder="Buscar categorías" class="full-width">
                       <template v-slot:prepend>
                         <q-icon name="search"/>
                       </template>
                     </q-input>
                   </template>
                   <template v-slot:body-cell-opciones="props">
-                    <q-td :props="props" auto-width>
-<!--                      {{props.row}}-->
+                    <q-td @click="clickCategoria(props.row)" :props="props" auto-width>
                       <q-icon name="arrow_forward_ios"/>
+                    </q-td>
+                  </template>
+                  <template v-slot:body-cell-nombre="props">
+                    <q-td @click="clickCategoria(props.row)" :props="props">
+                      {{ props.row.nombre }}
                     </q-td>
                   </template>
                 </q-table>
               </div>
-<!--              <div class="col-12 ">-->
-<!--                <q-input dense outlined v-model="categoria.nombre" label="Nombre de la categoría*" hint="Porfavor ingresar nombre de la categoría" :rules="rule" required counter clearable>-->
-<!--                  <template v-slot:prepend>-->
-<!--                    <q-icon name="category" />-->
-<!--                  </template>-->
-<!--                </q-input>-->
-<!--              </div>-->
-<!--              <div class="col-12 q-py-md">-->
-<!--                <q-btn label="Crear categoría" no-caps color="warning"  class=" text-build text-black full-width" type="submit"/>-->
-<!--              </div>-->
+            </div>
+          </q-form>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="dialogUpdateCategoria" position="right" full-height :maximized="true">
+      <q-card style="width: 450px; max-width: 80vw;">
+        <q-card-section class="row items-center q-pb-none">
+          <div class="text-h6">Editar categorías</div>
+          <q-space />
+          <q-btn icon="cancel" flat round dense v-close-popup />
+        </q-card-section>
+        <q-card-section class="row items-center no-wrap">
+          <q-form @submit.prevent="updateCategoria">
+            <div class="row">
+              <div class="col-12">
+                <div class="text-caption text-grey">Los campos marcados con asterisco (<span class="text-red">*</span>) son obligatorios</div>
+              </div>
+              <div class="col-12 ">
+                <q-input dense outlined v-model="categoria.nombre" label="Nombre de la categoría*" hint="Porfavor ingresar nombre de la categoría" :rules="rule" required counter clearable>
+                  <template v-slot:prepend>
+                    <q-icon name="category" />
+                  </template>
+                </q-input>
+              </div>
+              <div class="col-12">
+                <q-btn label="Guardar cambios" no-caps color="warning"  class=" text-build text-black full-width" type="submit"/>
+              </div>
+              <div class="col-12">
+                <q-btn @click="deleteCategoria" :disable="productoscategoria.length!=0" label="Eliminar categoría" no-caps color="red" outline flat class=" text-build full-width " type="button" icon="delete"/>
+              </div>
+              <div class="col-12">
+                <q-table dense flat bordered hide-bottom hide-header :columns="columnsproducto" :rows="productoscategoria" :filter="filterproductocategoria">
+                  <template v-slot:top>
+                    <q-input  dense outlined clearable counter hint="Buscar producto" v-model="filterproductocategoria" placeholder="Buscar productos" class="full-width">
+                      <template v-slot:prepend>
+                        <q-icon name="search"/>
+                      </template>
+                    </q-input>
+                  </template>
+                  <template v-slot:body-cell-nombre="props">
+                    <q-td :props="props">
+<!--                      {{ props.row.nombre }}-->
+                      <q-item>
+<!--                        <q-item-section style="border: 1px solid black">-->
+                          <q-img :src="url+'../imagenes/'+props.row.foto" width="45px"/>
+<!--                        </q-item-section>-->
+<!--                        <q-item-section >-->
+                          <q-item-section class="q-pl-xs q-ma-none" >
+                            <div class="text-left text-grey">{{ props.row.nombre }}</div>
+                            <div :class="props.row.cantidad<=0?'text-left text-bold text-red':' text-left text-bold'">{{ props.row.cantidad }} {{ $q.screen.lt.md?'Dis':'Disponible' }} <span class="text-black">{{ props.row.precio }} Bs</span></div>
+                          </q-item-section>
+<!--                        </q-item-section>-->
+                      </q-item>
+                    </q-td>
+                  </template>
+                  <template v-slot:body-cell-opciones="props">
+                    <q-td @click="deleteProductoCategoria(props.row,props.pageIndex)" :props="props" auto-width>
+                      <q-icon color="red" name="o_delete" size="30px"/>
+                    </q-td>
+                  </template>
+                </q-table>
+              </div>
+
             </div>
           </q-form>
         </q-card-section>
@@ -560,7 +663,9 @@ export default {
         {label:'nombre',field:'nombre',name:'nombre',align:'left'},
         {label:'opciones',field:'opciones',name:'opciones'}
       ],
+      filterproductocategoria:'',
       dialogSearchUpdateCategoria:false,
+      dialogUpdateCategoria:false,
       dialogUpdateProducto:false,
       rule:[
         val => (val && val.length > 0) || 'Por favor escriba algo'
@@ -586,12 +691,94 @@ export default {
         {label: 'Últimas unidades disponibles',value: 'Últimas unidades disponibles',icon:'list'},
       ],
       producto:{},
+      productos:this.$store.getters['login/productos'],
       foto:'',
       dialogCreateCategoria:false,
-      categoria:{}
+      categoria:{},
+      productoscategoria:[],
     }
   },
+  created() {
+    // this.productos=this.$store.state.login.productos
+    // this.$store.getters['login/productos'].forEach(p => {
+    //   console.log(p)
+    //   // if(producto.categoria_id==c.id){
+    //   //   this.productos.push(p)
+    //   // }
+    // })
+  },
   methods:{
+    clickCategoria(c){
+      // console.log(c)
+      this.categoria={
+        id:c.id,
+        nombre:c.nombre,
+        negocio_id:c.negocio_id
+      }
+      this.dialogSearchUpdateCategoria=false
+      this.dialogUpdateCategoria=true
+      this.filterproductocategoria=''
+      this.productoscategoria=[]
+      this.$store.getters['login/productos'].forEach(p => {
+        if(p.categoria_id==c.id){
+          // console.log(p)
+          this.productoscategoria.push({
+            cantidad:p.cantidad,
+            categoria_id:p.categoria_id,
+            foto:p.foto,
+            id:p.id,
+            negocio_id:p.negocio_id,
+            nombre:p.nombre,
+            precio:p.precio,
+          })
+        }
+      })
+    },
+    updateCategoria(){
+      this.$q.loading.show()
+      // this.categoria.negocio_id=this.$store.getters["login/negocio"].id
+      // console.log(this.categoria)
+      this.$api.put("categoria/"+this.categoria.id,this.categoria).then(res=>{
+        // console.log(res.data)
+        this.dialogUpdateCategoria=false
+        this.categoria={}
+        this.miscategorias()
+        this.$q.notify({
+          message:"Cambio de categoria correctamente",
+          color:'green',
+          icon:'check'
+        })
+      })
+    },
+    buscarPorCategoria(filterCategoria){
+      if (filterCategoria.label=="Ver todas las categorias"){
+        this.productos=this.$store.getters['login/productos']
+      }else{
+        const needle = filterCategoria.id
+        let productos=[]
+        this.$store.getters['login/productos'].forEach(producto => {
+
+          if(producto.categoria_id==needle){
+            // console.log(producto.categoria_id+'------'+needle)
+            productos.push(producto)
+          }
+        })
+        this.productos=productos
+      }
+    },
+    buscarProducto(filterProducto){
+      if(filterProducto!=null){
+        const needle = filterProducto.toLowerCase()
+        let productos=[]
+        this.$store.getters['login/productos'].forEach(producto => {
+          productos.push(producto)
+        })
+        let options = productos.filter(v => v.nombre.toLowerCase().indexOf(needle) > -1)
+        this.productos=options
+      }else{
+        this.productos=this.$store.getters['login/productos']
+      }
+    },
     clickUpdateCategoria(){
       this.dialogSearchUpdateCategoria=true
     },
@@ -783,9 +970,82 @@ export default {
         }
       }
     },
+    deleteCategoria(){
+      this.$q.dialog({
+        message:"¿Seguro de eliminar  categoría?",
+        title:"Eliminar categoría",
+        ok:{
+          push:true
+        },
+        cancel:{
+          push:true,
+          color:'negative'
+        }
+      }).onOk(()=>{
+        this.$q.loading.show()
+        // p.categoria_id=null
+        this.$api.delete('categoria/'+this.categoria.id).then(res=>{
+          // console.log(res.data)
+          this.dialogUpdateCategoria=false
+          // this.productoscategoria.splice(c,1)
+          this.miscategorias()
+          // this.productoscategoria=[]
+          // this.$store.getters['login/productos'].forEach(producto => {
+          //   if(producto.categoria_id==c.id){
+          //     this.productoscategoria.push(producto)
+          //   }
+          // })
+          // this.productoscategoria=[]
+          // this.$store.getters['login/productos'].forEach(producto => {
+          //   if(producto.categoria_id==c.id){
+          //     this.productoscategoria.push(producto)
+          //   }
+          // })
+          // this.dialogDetalleProducto=false
+          // this.misproductos()
+        })
+      })
+    },
+    deleteProductoCategoria(p,c){
+      // console.log(c)
+      // return false
+      this.$q.dialog({
+        message:"¿Seguro de eliminar de la categoría?",
+        title:"Eliminar de la categoría",
+        ok:{
+          push:true
+        },
+        cancel:{
+          push:true,
+          color:'negative'
+        }
+      }).onOk(()=>{
+        this.$q.loading.show()
+        p.categoria_id=null
+        this.$api.put('producto/'+p.id,p).then(res=>{
+
+          this.productoscategoria.splice(c,1)
+          this.misproductos()
+          // this.productoscategoria=[]
+          // this.$store.getters['login/productos'].forEach(producto => {
+          //   if(producto.categoria_id==c.id){
+          //     this.productoscategoria.push(producto)
+          //   }
+          // })
+          // this.productoscategoria=[]
+          // this.$store.getters['login/productos'].forEach(producto => {
+          //   if(producto.categoria_id==c.id){
+          //     this.productoscategoria.push(producto)
+          //   }
+          // })
+          // this.dialogDetalleProducto=false
+          // this.misproductos()
+        })
+      })
+    },
     deleteProducto(){
       this.$q.dialog({
-        message:"¿Seguro de elminar?",
+        message:"¿Seguro de eliminar?",
         title:"Eliminar",
         ok:{
           push:true
@@ -852,13 +1112,13 @@ export default {
       // console.log(this.producto.categoria_id)
       // return false
       let cat=this.$store.getters["login/categorias"].find(c=>c.id===this.producto.categoria_id)
-      console.log(cat)
+      // console.log(cat)
       // return false
 
       // console.log(categoria)
       // return false
       if (cat==undefined){
-        console.log('aa')
+        // console.log('aa')
         this.producto.categorias= {
           label: 'Sin categoria',
           value: 'Sin categoria',
@@ -932,7 +1192,9 @@ export default {
     costototal(){
       let ct=0
       this.$store.getters["login/productos"].forEach(p=>{
-        ct=ct+ parseFloat(p.precio) * parseFloat(p.cantidad)
+        if (p.cantidad>0){
+          ct=ct+ parseFloat(p.precio) * parseFloat(p.cantidad)
+        }
       })
       return ct.toFixed(2)
     }

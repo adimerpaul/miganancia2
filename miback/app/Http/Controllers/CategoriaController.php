@@ -71,6 +71,8 @@ class CategoriaController extends Controller
      */
     public function update(UpdateCategoriaRequest $request, Categoria $categoria)
     {
+//        return $request;
+        $categoria=Categoria::find($request->id);
         return $categoria->update($request->all());
     }
 
@@ -80,8 +82,10 @@ class CategoriaController extends Controller
      * @param  \App\Models\Categoria  $categoria
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Categoria $categoria)
+    public function destroy($categoria_id)
     {
+//        return $categoria;
+        $categoria=Categoria::find($categoria_id);
         $categoria->delete();
     }
 }

@@ -149,7 +149,7 @@
                         <q-item-label caption>{{$store.getters["login/negocio"].tipo}}</q-item-label>
                       </q-card-section>
                       <q-card-section @click="dialogcambioempresa=true" class="q-pa-none q-ma-none flex flex-center">
-                        <q-icon name="arrow_drop_down_circle" size="lg" />
+                        <q-icon name="o_arrow_drop_down_circle" size="lg" />
                       </q-card-section>
                     </q-card-section>
                   </q-card-section>
@@ -811,6 +811,8 @@ export  default({
       this.negocio.user_id=this.$store.getters["login/user"].id
       this.$api.post('negocio',this.negocio).then(res=>{
         this.misnegocios()
+        this.miscategorias()
+        this.misproductos()
         this.dialogcreatenegocio=false
         this.$q.notify({
           message:'Creado correctamente',
@@ -930,6 +932,8 @@ export  default({
       this.negocio.tipo=this.negocio.tipos.label
       this.$api.put('negocio/'+this.negocio.id,this.negocio).then(res=>{
         this.misnegocios()
+        this.miscategorias()
+        this.misproductos()
         this.dialognegocio=false
         this.$q.notify({
           message:'Editado correctamente',

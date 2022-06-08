@@ -2,7 +2,7 @@
   "name": "mifront",
   "version": "0.0.1",
   "description": "A Quasar Project",
-  "productName": "Mi ganancia.com",
+  "productName": "Mi negocio.com",
   "author": "adimerpaul <adimer101@gmail.com>",
   "private": true,
   "scripts": {
@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
-    "pinia": "^2.0.11",
+    "vuex": "^4.0.1",
     "@quasar/extras": "^1.0.0",
     "core-js": "^3.6.5",
     "quasar": "^2.6.0",

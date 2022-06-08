@@ -13,8 +13,8 @@
             align="justify"
             narrow-indicator
           >
-            <q-tab name="login" label="Ingresar" class="full-width" />
-            <q-tab name="registro" label="Registrarse" class="full-width"/>
+            <q-tab name="login" label="Ingresar" />
+            <q-tab name="registro" label="Registrarse" />
           </q-tabs>
           <q-separator />
           <q-tab-panels v-model="tab" animated>
@@ -143,21 +143,7 @@
                     </q-input>
                   </div>
                   <div class="col-12 ">
-                    <q-input dense outlined v-model="user.password" label="password*" :type="isPwd ? 'password' : 'text'" hint="Porfavor ingresar contraseña" :rules="rule">
-                      <template v-slot:prepend>
-                        <q-icon name="lock" />
-                      </template>
-                      <template v-slot:append>
-                        <q-icon
-                          :name="isPwd ? 'visibility_off' : 'visibility'"
-                          class="cursor-pointer"
-                          @click="isPwd = !isPwd"
-                        />
-                      </template>
-                    </q-input>
-                  </div>
-                  <div class="col-12 ">
-                    <q-input dense outlined v-model="user.password_confirmation" label="Password confirmation*" :type="isPwd ? 'password' : 'text'" hint="Porfavor vuelva a escribir su contraseña" :rules="rule">
+                    <q-input dense outlined v-model="user.password" label="password*" :type="isPwd ? 'password' : 'text'" hint="Porfavor ingresar carnet de identidad" :rules="rule">
                       <template v-slot:prepend>
                         <q-icon name="lock" />
                       </template>
@@ -219,14 +205,11 @@
 </template>
 
 <script>
-
-import {useCounterStore} from 'stores/login'
 export default {
   name:`Login`,
   data(){
     return{
       tab:'login',
-      store:useCounterStore(),
       user:{},
       email:'',
       password:'',
@@ -257,69 +240,66 @@ export default {
     }
   },
   created() {
-    if (this.store.isLoggedIn){
+    if (this.$store.getters["login/isLoggedIn"]){
       this.$router.push('/home')
     }
   },
   methods: {
-    // miscategorias(){
-    //   this.$store.dispatch('login/categorias').then((res) =>{
-    //     this.$q.loading.hide()
-    //   }).catch(err => {
-    //     this.$q.loading.hide();
-    //     this.$q.notify({
-    //       message:err.response.data.message,
-    //       color:'red',
-    //       icon:'error'
-    //     })
-    //   })
-    // },
-    // misnegocios(){
-    //   this.$store.dispatch('login/negocios').then((res) =>{
-    //     this.$q.loading.hide()
-    //   })
-    //   //   .catch(err => {
-    //   //   this.$q.loading.hide();
-    //   //   this.$q.notify({
-    //   //     message:err.response.data.message,
-    //   //     color:'red',
-    //   //     icon:'error'
-    //   //   })
-    //   // })
-    // },
-    // misproductos(){
-    //   this.$store.dispatch('login/productos').then((res) =>{
-    //     this.$q.loading.hide()
-    //   }).catch(err => {
-    //     this.$q.loading.hide();
-    //     this.$q.notify({
-    //       message:err.response.data.message,
-    //       color:'red',
-    //       icon:'error'
-    //     })
-    //   })
-    // },
+    miscategorias(){
+      this.$store.dispatch('login/categorias').then((res) =>{
+        this.$q.loading.hide()
+      }).catch(err => {
+        this.$q.loading.hide();
+        this.$q.notify({
+          message:err.response.data.message,
+          color:'red',
+          icon:'error'
+        })
+      })
+    },
+    misnegocios(){
+      this.$store.dispatch('login/negocios').then((res) =>{
+        this.$q.loading.hide()
+      })
+      //   .catch(err => {
+      //   this.$q.loading.hide();
+      //   this.$q.notify({
+      //     message:err.response.data.message,
+      //     color:'red',
+      //     icon:'error'
+      //   })
+      // })
+    },
+    misproductos(){
+      this.$store.dispatch('login/productos').then((res) =>{
+        this.$q.loading.hide()
+      }).catch(err => {
+        this.$q.loading.hide();
+        this.$q.notify({
+          message:err.response.data.message,
+          color:'red',
+          icon:'error'
+        })
+      })
+    },
 
-    // login () {
-    //   this.$q.loading.show()
-    //   this.$store.dispatch('login/login', { email:this.email, password:this.password }).then(() =>{
-    //     this.$q.loading.hide()
-    //     this.miscategorias()
-    //     this.misproductos()
-    //     // this.misnegocios()
-    //     this.$router.push('/home')
-    //   }).catch(err => {
-    //     this.$q.loading.hide();
-    //     // console.log(err.response.data.res)
-    //     this.$q.notify({
-    //       message:err.response.data.res,
-    //       color:'red',
-    //       icon:'error'
-    //     })
-    //   })
-    // },
-    login(){
-
+    login () {
+      this.$q.loading.show()
+      this.$store.dispatch('login/login', { email:this.email, password:this.password }).then(() =>{
+        this.$q.loading.hide()
+        this.miscategorias()
+        this.misproductos()
+        // this.misnegocios()
+        this.$router.push('/home')
+      }).catch(err => {
+        this.$q.loading.hide();
+        // console.log(err.response.data.res)
+        this.$q.notify({
+          message:err.response.data.res,
+          color:'red',
+          icon:'error'
+        })
+      })
     },
     uploadFile (file) {
       let dialog = this.$q.dialog({
@@ -364,46 +344,22 @@ export default {
       // this.user.unit_id=this.user.unit.id
       this.user.foto=this.foto
       this.user.tipo=this.user.tipos.label
-      this.$api.post('/register',this.user).then(res=>{
+      this.$store.dispatch('login/register', this.user).then((res) =>{
         // console.log(res.data)
-        this.store.user=res.data.user
-        this.store.negocios=res.data.user.negocios
-        let ne = this.store.negocios.find(n=>n.id===res.data.user.minegocio)
-        // console.log(ne)
-        this.store.negocio= ne
-        localStorage.setItem('tokenmi', res.data.token)
-        this.store.isLoggedIn=!!localStorage.getItem('tokenmi')
-        this.$api.defaults.headers.common['Authorization'] = 'Bearer '+res.data.token
-        this.$router.push('/home')
-        // console.log(this.store.user)
+        // return false
+        this.miscategorias()
+        this.misproductos()
+        // this.misnegocios()
         this.$q.loading.hide()
-
-      })
-      //   .catch(err => {
-      //   this.$q.loading.hide()
-      //   // console.log(err.response.data.errors)
-      //   this.$q.notify({
-      //     message: err.response.data.message,
-      //     color: 'red',
-      //     icon: 'error'
-      //   })
-      // })
-      // this.$store.dispatch('login/register', this.user).then((res) =>{
-      //   // console.log(res.data)
-      //   // return false
-      //   this.miscategorias()
-      //   this.misproductos()
-      //   // this.misnegocios()
-      //   this.$q.loading.hide()
-      //   this.$router.push('/home')
-      // }).catch(err => {
-      //   this.$q.loading.hide();
-      //   // console.log(err.response.data.errors)
-      //   this.$q.notify({
-      //     message:err.response.data.message,
-      //     color:'red',
-      //     icon:'error'
-      //   })
+        this.$router.push('/home')
+      }).catch(err => {
+        this.$q.loading.hide();
+        // console.log(err.response.data.errors)
+        this.$q.notify({
+          message:err.response.data.message,
+          color:'red',
+          icon:'error'
+        })
         // let text=''
         // Object.entries(err.response.data.errors).forEach(([key, value]) => {
         //   // console.log(`${key} ${value}`);
@@ -414,7 +370,7 @@ export default {
         //   color:'red',
         //   icon:'error'
         // })
-      // })
+      })
     },
   }
 

@@ -44,7 +44,6 @@ module.exports = configure(function (ctx) {
       // 'themify',
       // 'line-awesome',
       // 'roboto-font-latin-ext', // this or either 'roboto-font', NEVER both!
-
       'material-icons-round',
       'material-icons-outlined',
       'material-icons-sharp',
@@ -101,6 +100,7 @@ module.exports = configure(function (ctx) {
     framework: {
       config: {},
       lang:'es',
+
       // iconSet: 'material-icons', // Quasar icon set
       // lang: 'en-US', // Quasar language pack
 
@@ -113,9 +113,9 @@ module.exports = configure(function (ctx) {
 
       // Quasar plugins
       plugins: [
-        'Dialog',
+        'Loading',
         'Notify',
-        'Loading'
+        'Dialog'
       ]
     },
 

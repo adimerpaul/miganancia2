@@ -319,7 +319,23 @@ export default {
     //   })
     // },
     login(){
-
+        this.$q.loading.show()
+        this.$api.post('login', { email:this.email, password:this.password }).then((res) =>{
+          this.$q.loading.hide()
+          this.store.user=res.data.user
+          this.store.negocio=res.data.negocio
+          localStorage.setItem('tokenmi', res.data.token)
+          this.store.isLoggedIn=true
+          this.$api.defaults.headers.common['Authorization'] = 'Bearer '+res.data.token
+          this.$router.push('/home')
+        }).catch(err => {
+          this.$q.loading.hide();
+          this.$q.notify({
+            message:err.response.data.res,
+            color:'red',
+            icon:'error'
+          })
+        })
     },
     uploadFile (file) {
       let dialog = this.$q.dialog({
@@ -365,29 +381,22 @@ export default {
       this.user.foto=this.foto
       this.user.tipo=this.user.tipos.label
       this.$api.post('/register',this.user).then(res=>{
-        // console.log(res.data)
+        this.$q.loading.hide()
         this.store.user=res.data.user
-        this.store.negocios=res.data.user.negocios
-        let ne = this.store.negocios.find(n=>n.id===res.data.user.minegocio)
-        // console.log(ne)
-        this.store.negocio= ne
+        this.store.negocio=res.data.negocio
         localStorage.setItem('tokenmi', res.data.token)
-        this.store.isLoggedIn=!!localStorage.getItem('tokenmi')
+        this.store.isLoggedIn=true
         this.$api.defaults.headers.common['Authorization'] = 'Bearer '+res.data.token
         this.$router.push('/home')
-        // console.log(this.store.user)
+      }).catch(err => {
         this.$q.loading.hide()
-
+        // console.log(err.response.data.errors)
+        this.$q.notify({
+          message: err.response.data.message,
+          color: 'red',
+          icon: 'error'
+        })
       })
-      //   .catch(err => {
-      //   this.$q.loading.hide()
-      //   // console.log(err.response.data.errors)
-      //   this.$q.notify({
-      //     message: err.response.data.message,
-      //     color: 'red',
-      //     icon: 'error'
-      //   })
-      // })
       // this.$store.dispatch('login/register', this.user).then((res) =>{
       //   // console.log(res.data)
       //   // return false

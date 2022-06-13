@@ -46,6 +46,7 @@ class NegocioController extends Controller
         $user=User::find($request->user()->id);
         $user->minegocio=$negocio->id;
         $user->save();
+        return $negocio;
     }
 
     /**
@@ -54,9 +55,9 @@ class NegocioController extends Controller
      * @param  \App\Models\Negocio  $negocio
      * @return \Illuminate\Http\Response
      */
-    public function show(Negocio $negocio)
+    public function show($user_id)
     {
-        //
+        return Negocio::where('user_id',$user_id)->get();
     }
 
     /**
@@ -80,6 +81,7 @@ class NegocioController extends Controller
     public function update(UpdateNegocioRequest $request, Negocio $negocio)
     {
         $negocio->update($request->all());
+        return $negocio;
     }
 
     /**

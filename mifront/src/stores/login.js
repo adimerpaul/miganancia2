@@ -6,6 +6,8 @@ export const useCounterStore = defineStore('counter', {
     user:{},
     negocio:{},
     negocios:[],
+    dialogCreateCategoria:false,
+    dialogCreateProducto:false,
     isLoggedIn:!!localStorage.getItem('tokenmi'),
   }),
 

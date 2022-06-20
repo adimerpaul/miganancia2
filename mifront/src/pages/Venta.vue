@@ -148,7 +148,7 @@
                       Total
                     </q-item-section>
                     <q-item-section side>
-                        <div class="text-right text-grey"> <u> Bs {{total}}</u></div>
+                        <div class="text-right text-grey-8 text-bold"> <u> Bs {{total}}</u></div>
                     </q-item-section>
                   </template>
                   <q-card>
@@ -173,7 +173,7 @@
 <!--              <div class="row">-->
 <!--                <div class="col-9">Total</div>-->
 <!--                -->
-                <q-btn class="full-width" no-caps label="Confirmar productos" :color="productosVenta.length==0?'grey':'warning'" :disable="productosVenta.length==0?true:false"/>
+                <q-btn class="full-width" no-caps label="Confirmar venta" :color="productosVenta.length==0?'grey':'warning'" :disable="productosVenta.length==0?true:false"/>
 <!--              </div>-->
             </q-card-section>
           </q-card>

@@ -6,7 +6,7 @@
           <q-img src="/logo.png" spinner-color="white" style="height: 28px; max-width: 30px" />
           <q-item-section class="text-center text-bold">Mi Ganancia.com</q-item-section>
         </q-item>
-        <q-item class="">
+        <q-item v-if="store.isLoggedIn">
           <q-item-section>
             <div > <b>Bienvenido: </b> {{store.user.name}}
               <!--              <pre>{{store.user}}</pre>-->

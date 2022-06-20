@@ -30,4 +30,5 @@ Route::group(['middleware'=>'auth:sanctum'],function (){
     Route::resource('/user',\App\Http\Controllers\UserController::class);
     Route::resource('/categoria',\App\Http\Controllers\CategoriaController::class);
     Route::resource('/producto',\App\Http\Controllers\ProductoController::class);
+    Route::resource('/sale',\App\Http\Controllers\SaleController::class);
 });

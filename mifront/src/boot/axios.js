@@ -1,6 +1,6 @@
 import { boot } from 'quasar/wrappers'
 import axios from 'axios'
-import {useCounterStore} from 'stores/login'
+import {useCounterStore} from 'stores/example-store'
 // Be careful when using SSR for cross-request state pollution
 // due to creating a Singleton instance here;
 // If any client changes this (global) instance, it might be a
@@ -20,47 +20,21 @@ export default boot(({ app ,router}) => {
 
   const token = localStorage.getItem('tokenmi')
   if (token) {
-    // console.log('a')
-    // api.defaults.headers.common['Authorization'] = 'Bearer '+token
     app.config.globalProperties.$api.defaults.headers.common['Authorization'] = 'Bearer '+token
-    // app.config.globalProperties.$api.get('categoria').then(res=>{
-    //   store.commit("login/categorias_request",res.data)
-    // })
-    // app.config.globalProperties.$api.get('producto').then(res=>{
-    //   // console.log(res.data)
-    //   store.commit("login/productos_request",res.data)
-    // })
     app.config.globalProperties.$api.post('me').then(res=>{
-      // console.log(res.data);
-      useCounterStore().user=res.data
-      useCounterStore().negocios=res.data.negocios
-      let ne = useCounterStore().negocios.find(n=>n.id===res.data.minegocio)
-      // console.log(ne)
-      useCounterStore().negocio= ne
-      // return false;
-      // store.state.user=res.data;
-      // store().commit('login/auth_success', {token:token,user:res.data})
-      // store.commit('login/auth_success',{token:token,user:res.data})
-      // store.commit('login/negocios_request',{token:token,user:res.data})
+      useCounterStore().user=res.data.user
+      useCounterStore().negocio=res.data.negocio
+      useCounterStore().isLoggedIn=true
+      // let ne = useCounterStore().negocios.find(n=>n.id===res.data.minegocio)
+      // useCounterStore().negocio= ne
     }).catch(err=>{
-      // console.error('aas')
-      // store.commit('login/salir')
-      // localStorage.removeItem('tokenmi')
-      // this.store.user={}
-
       app.config.globalProperties.$api.defaults.headers.common['Authorization']=''
-      // console.log(res.data)
       useCounterStore().user={}
       useCounterStore().negocio={}
-      useCounterStore().negocios=[]
-      // localStorage.setItem('tokenmi', res.data.token)
+      // useCounterStore().negocios=[]
       localStorage.removeItem('tokenmi')
       useCounterStore().isLoggedIn=false
       router.push('/')
-      // localStorage.setItem('tokenmi', res.data.token)
-      // localStorage.removeItem('tokenmi')
-      // useCounterStore().isLoggedIn=false
-      // this.$router.push('/')
     })
   }
   // ^ ^ ^ this will allow you to use this.$api (for Vue Options API form)

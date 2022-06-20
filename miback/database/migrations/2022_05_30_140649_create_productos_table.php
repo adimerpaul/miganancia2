@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string("codigo")->default(null)->nullable();
             $table->integer("cantidad")->default(0)->nullable();
             $table->double("costo",11,2)->default(null)->nullable();
+            $table->double("ganancia",11,2)->default(null)->nullable();
             $table->double("precio",11,2)->default()->nullable();
             $table->string("descripcion")->default(null)->nullable();
             $table->boolean("visible")->default(true);

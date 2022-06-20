@@ -115,7 +115,8 @@ module.exports = configure(function (ctx) {
       plugins: [
         'Dialog',
         'Notify',
-        'Loading'
+        'Loading',
+        'LoadingBar'
       ]
     },
 
@@ -134,7 +135,7 @@ module.exports = configure(function (ctx) {
                       // (gets superseded if process.env.PORT is specified at runtime)
 
       maxAge: 1000 * 60 * 60 * 24 * 30,
-        // Tell browser when a file from the server should expire from cache (in ms)
+      // Tell browser when a file from the server should expire from cache (in ms)
 
 
       chainWebpackWebserver (chain) {

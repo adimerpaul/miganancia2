@@ -1,7 +1,5 @@
 <template>
-  <q-page class="q-pa-xs">
-
-  </q-page>
+  <q-page></q-page>
 </template>
 
 <script>

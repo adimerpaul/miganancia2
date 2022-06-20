@@ -77,12 +77,13 @@ class UserController extends Controller
     public function me(Request $request){
 //        $user=$request->user()->with('unid')->with('permisos')->firstOrFail();
 //        $user=$request->user()
-        $user=User::where('id',$request->user()->id)
-//            ->with('unid')
-//            ->with('permisos')
-            ->with('negocios')
-            ->firstOrFail();
-        return $user;
+//        $user=User::where('id',$request->user()->id)
+////            ->with('unid')
+////            ->with('permisos')
+//            ->with('negocios')
+//            ->firstOrFail();
+        $negocio=Negocio::find($request->user()->minegocio);
+        return response()->json(['user'=>$request->user(),'negocio'=>$negocio],200);
 
 //        return User::where('id',1)->with('unid')->get();
     }

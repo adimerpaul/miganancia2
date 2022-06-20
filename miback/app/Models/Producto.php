@@ -13,6 +13,7 @@ class Producto extends Model
         "codigo",
         "cantidad",
         "costo",
+        "ganancia",
         "precio",
         "foto",
         "descripcion",

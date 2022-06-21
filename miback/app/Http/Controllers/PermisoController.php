@@ -2,20 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Cliente;
-use App\Http\Requests\StoreClienteRequest;
-use App\Http\Requests\UpdateClienteRequest;
-use Illuminate\Http\Request;
-class ClienteController extends Controller
+use App\Models\Permiso;
+use App\Http\Requests\StorePermisoRequest;
+use App\Http\Requests\UpdatePermisoRequest;
+
+class PermisoController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-        return Cliente::where('negocio_id',$request->user()->minegocio)->get();
+        //
     }
 
     /**
@@ -31,10 +31,10 @@ class ClienteController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreClienteRequest  $request
+     * @param  \App\Http\Requests\StorePermisoRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreClienteRequest $request)
+    public function store(StorePermisoRequest $request)
     {
         //
     }
@@ -42,10 +42,10 @@ class ClienteController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Cliente  $cliente
+     * @param  \App\Models\Permiso  $permiso
      * @return \Illuminate\Http\Response
      */
-    public function show(Cliente $cliente)
+    public function show(Permiso $permiso)
     {
         //
     }
@@ -53,10 +53,10 @@ class ClienteController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Cliente  $cliente
+     * @param  \App\Models\Permiso  $permiso
      * @return \Illuminate\Http\Response
      */
-    public function edit(Cliente $cliente)
+    public function edit(Permiso $permiso)
     {
         //
     }
@@ -64,11 +64,11 @@ class ClienteController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\UpdateClienteRequest  $request
-     * @param  \App\Models\Cliente  $cliente
+     * @param  \App\Http\Requests\UpdatePermisoRequest  $request
+     * @param  \App\Models\Permiso  $permiso
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateClienteRequest $request, Cliente $cliente)
+    public function update(UpdatePermisoRequest $request, Permiso $permiso)
     {
         //
     }
@@ -76,10 +76,10 @@ class ClienteController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Cliente  $cliente
+     * @param  \App\Models\Permiso  $permiso
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Cliente $cliente)
+    public function destroy(Permiso $permiso)
     {
         //
     }

@@ -17,5 +17,7 @@ class Sale extends Model
         "cliente_id",
         "provider_id",
         "user_id",
+        "tipo",
+        "negocio_id",
     ];
 }

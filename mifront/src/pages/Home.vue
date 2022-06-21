@@ -50,17 +50,17 @@
         <div class="col-6 col-sm-2 q-pa-xs">
           <q-input type="date" label="Hasta" v-model="fechas.hasta" outlined dense/>
         </div>
-        <div class="col-6 col-sm-4 q-pa-xs">
-          <q-input placeholder="Buscar concepto..." v-model="buscar" outlined dense clearable hint="Recuerda ingresar al menos 3 caracteres para iniciar tu búsqueda." counter>
+        <div class="col-6 col-sm-3 q-pa-xs">
+          <q-input placeholder="Buscar concepto..." v-model="buscar" outlined dense clearable>
             <template v-slot:prepend>
               <q-icon name="search"/>
             </template>
           </q-input>
         </div>
-        <div class="col-6 col-sm-2 q-pa-xs ">
+        <div class="col-6 col-sm-3 q-pa-xs ">
           <q-btn icon="download" flat outline label="Descargar reporte" no-caps class="full-width" />
         </div>
-        <div class="col-12 col-sm-4 q-pa-xs">
+        <div class="col-12 col-sm-4 q-pa-none">
           <q-card bordered flat>
             <q-item >
               <q-item-section avatar >
@@ -73,7 +73,7 @@
             </q-item>
           </q-card>
         </div>
-        <div class="col-12 col-sm-4 q-pa-xs">
+        <div class="col-12 col-sm-4 q-pa-none">
           <q-card bordered flat>
             <q-item >
               <q-item-section avatar >
@@ -86,7 +86,7 @@
             </q-item>
           </q-card>
         </div>
-        <div class="col-12 col-sm-4 q-pa-xs">
+        <div class="col-12 col-sm-4 q-pa-none">
           <q-card bordered flat>
             <q-item >
               <q-item-section avatar >

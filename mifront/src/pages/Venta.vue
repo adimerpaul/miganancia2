@@ -48,7 +48,7 @@
             </div>
           </div>
           <div class="col-12">
-            <div class="row" av-else-if="productos.length==0 && $store.getters['login/productos'].length>0">
+            <div class="row">
               <div class="col-2" v-for="p in productos" :key="p.id">
                 <q-card @click="clickDetalleProducto(p)" style="cursor: pointer">
                   <q-tooltip>
@@ -57,7 +57,7 @@
                   <q-img :src="url+'../imagenes/'+p.foto" width="100%" height="100px">
                     <q-btn v-if="p.cantidadPedida==0" style="top: 0px; right: 0px;background: rgba(255,255,255,0.5);border: 1px solid black" size="10px" class="absolute all-pointer-events" icon="add_circle_outline" dense/>
                     <q-btn v-else :label="p.cantidadPedida" style="top: 0px; right: 0px;background: rgba(255,255,0,0.5);border: 1px solid black" size="10px" class="absolute all-pointer-events" icon="o_shopping_basket" dense/>
-                    <div class="absolute-bottom text-center text-subtitle2 noselect  q-pa-none q-ma-none">
+                    <div class="absolute-bottom text-center text-subtitle2 noSelect  q-pa-none q-ma-none">
                       {{p.nombre}}
                     </div>
                   </q-img>
@@ -82,7 +82,7 @@
             <q-card-section class="q-pa-none q-ma-none" >
               <div v-if="productosVenta.length==0" class="flex flex-center q-pa-lg">
                 <q-icon name="o_shopping_basket" color="grey" size="100px"/>
-                <div class="q-pa-lg text-grey text-center noselect">
+                <div class="q-pa-lg text-grey text-center noSelect">
                   Aún no tienes productos en tu canasta. Haz clic sobre un producto para agregarlo.
                 </div>
               </div>
@@ -154,9 +154,9 @@
                   <q-card>
                     <q-card-section>
                       <div class="row">
-                        <div class="col-7">Cantidades de referencia</div>
+                        <div class="col-7 text-grey">Cantidades de referencia</div>
                         <div class="col-5 text-right">{{productosVenta.length}}</div>
-                        <div class="col-7">
+                        <div class="col-7 text-grey">
                           Ganancia
                           <q-icon name="o_info">
                             <q-tooltip anchor="top middle" self="bottom middle" :offset="[10, 10]">
@@ -170,29 +170,137 @@
                   </q-card>
                 </q-expansion-item>
               </q-list>
-<!--              <div class="row">-->
-<!--                <div class="col-9">Total</div>-->
-<!--                -->
-                <q-btn class="full-width" no-caps label="Confirmar venta" :color="productosVenta.length==0?'grey':'warning'" :disable="productosVenta.length==0?true:false"/>
-<!--              </div>-->
+                <q-btn @click="clickSale" class="full-width" no-caps label="Confirmar venta" :color="productosVenta.length==0?'grey':'warning'" :disable="productosVenta.length==0?true:false"/>
             </q-card-section>
           </q-card>
         </div>
       </div>
-<!--      <pre>{{productos}}</pre>-->
     </q-page>
+    <q-dialog v-model="dialogSale" position="right" full-height :maximized="true">
+      <q-card style="width: 450px; max-width: 80vw;">
+        <q-card-section class="row items-center q-pb-none">
+          <div class="text-h6">Agregar producto</div>
+          <q-space />
+          <q-btn icon="cancel" flat round dense v-close-popup />
+        </q-card-section>
+        <q-card-section class="row items-center no-wrap">
+          <q-form @submit.prevent="createSale">
+            <div class="row">
+              <div class="col-12">
+                <div class="text-caption text-bold">Los campos marcados con asterisco (<span class="text-red">*</span>) son obligatorios</div>
+              </div>
+              <div class="col-12">
+                <q-input dense outlined type="date" v-model="sale.fecha" label="Fecha de la venta*" hint="Porfavor ingresar Fecha de la venta" :rules="rule" required>
+                  <template v-slot:prepend>
+                    <q-icon name="event" />
+                  </template>
+                </q-input>
+              </div>
+              <div class="col-12">
+                <div class="text-bold text-caption">Selecciona el método de pago <span class="text-red">*</span></div>
+                <div class="row">
+                  <div class="col-6">
+                    <q-card @click="updateMetodo('efectivo')" flat bordered class="q-pa-xs q-ma-xs text-center" :style="sale.medio=='efectivo'?'border: 1px solid green':'border: 1px solid grey'">
+                      <q-card-section class="q-pa-none">
+                        <q-icon name="o_payments" size="30px" color="grey"/>
+                      </q-card-section>
+                      <q-card-section class="q-pa-none">
+                        <div class="text-bold text-grey noSelect">Efectivo</div>
+                      </q-card-section>
+                      <div v-if="sale.medio=='efectivo'" class="absolute-top-right text-center text-white q-pa-xs" style="background: green">
+                        <q-icon name="check_circle_outline"/>
+                      </div>
+                    </q-card>
+                  </div>
+                  <div class="col-6">
+                    <q-card @click="updateMetodo('targeta')" flat bordered class="q-pa-xs q-ma-xs text-center" :style="sale.medio=='targeta'?'border: 1px solid green':'border: 1px solid grey'">
+                      <q-card-section class="q-pa-none">
+                        <q-icon name="credit_card" size="30px" color="grey"/>
+                      </q-card-section>
+                      <q-card-section class="q-pa-none">
+                        <div class="text-bold text-grey noSelect">Targeta</div>
+                      </q-card-section>
+                      <div v-if="sale.medio=='targeta'" class="absolute-top-right text-center text-white q-pa-xs" style="background: green">
+                        <q-icon name="check_circle_outline"/>
+                      </div>
+                    </q-card>
+                  </div>
+                  <div class="col-6">
+                    <q-card @click="updateMetodo('transferencia bancaria')" flat bordered class="q-pa-xs q-ma-xs text-center" :style="sale.medio=='transferencia bancaria'?'border: 1px solid green':'border: 1px solid grey'">
+                      <q-card-section class="q-pa-none">
+                        <q-icon name="account_balance" size="30px" color="grey"/>
+                      </q-card-section>
+                      <q-card-section class="q-pa-none">
+                        <div class="text-bold text-grey noSelect">Transferencia bancaria</div>
+                      </q-card-section>
+                      <div v-if="sale.medio=='transferencia bancaria'" class="absolute-top-right text-center text-white q-pa-xs" style="background: green">
+                        <q-icon name="check_circle_outline"/>
+                      </div>
+                    </q-card>
+                  </div>
+                  <div class="col-6">
+                    <q-card @click="updateMetodo('otro')" flat bordered class="q-pa-xs q-ma-xs text-center" :style="sale.medio=='otro'?'border: 1px solid green':'border: 1px solid grey'">
+                      <q-card-section class="q-pa-none">
+                        <q-icon name="list_alt" size="30px" color="grey"/>
+                      </q-card-section>
+                      <q-card-section class="q-pa-none">
+                        <div class="text-bold text-grey noSelect">Otro</div>
+                      </q-card-section>
+                      <div v-if="sale.medio=='otro'" class="absolute-top-right text-center text-white q-pa-xs" style="background: green">
+                        <q-icon name="check_circle_outline"/>
+                      </div>
+                    </q-card>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="text-bold text-caption">Agrega un cliente a la venta <span class="text-grey">(opcional)</span></div>
+              </div>
+              <div class="col-12 q-py-md">
+                <q-btn label="Confirmar venta" no-caps color="warning"  class=" text-build text-black full-width" type="submit"/>
+                <q-select
+                  dense
+                  outlined
+                  v-model="sale.clientes"
+                  :options="clientesOption"
+                  label="Cliente"
+                >
+                  <template v-slot:prepend>
+                    <q-icon name="search" />
+                  </template>
+                  <template v-slot:option="scope">
+                    <q-item v-bind="scope.itemProps" @click="clickCreateCategoriaProd(scope.opt)">
+                      <q-item-section avatar v-if="scope.opt.label=='Crear una nueva categoría'">
+                        <q-icon name="add_circle_outline" />
+                      </q-item-section>
+                      <q-item-section>
+                        <q-item-label>{{ scope.opt.label }}</q-item-label>
+                      </q-item-section>
+                    </q-item>
+                  </template>
+                </q-select>
+              </div>
+            </div>
+          </q-form>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 <script>
 
 import {useCounterStore} from "stores/example-store";
+import {date} from "quasar";
 
 export default {
   name: `Venta`,
   data(){
     return {
+      dialogSale:false,
       url: process.env.API,
       store:useCounterStore(),
+      sale:{},
+      clientesOption:[],
       ordenar:{label: 'Productos más vendidos',value: 'Productos más vendidos',icon:'list'},
       categoriaver:{
         label: 'Ver todas las categorias',
@@ -228,9 +336,28 @@ export default {
   created() {
     this.$q.loading.show()
     this.misproductos()
+    this.misclientes()
     this.miscategorias()
   },
   methods:{
+    misclientes(){
+      this.$api.get('cliente').then(res=>{
+        this.clientesOption=res.data
+      })
+    },
+    updateMetodo(medio){
+      this.sale.medio=medio
+    },
+    clickSale(){
+      this.dialogSale=true
+      this.sale={
+        fecha:date.formatDate(new Date(),'YYYY-MM-DD'),
+        medio:'efectivo',
+      }
+    },
+    createSale(){
+
+    },
     async vaciarCanasta() {
       let dato =await this.productosVenta.forEach(p => {
         p.cantidad = p.cantidadReal
@@ -390,7 +517,7 @@ export default {
 </script>
 
 <style scoped>
-.noselect{
+.noSelect{
   -webkit-touch-callout: none; /* iOS Safari */
   -webkit-user-select: none; /* Safari */
   -khtml-user-select: none; /* Konqueror HTML */

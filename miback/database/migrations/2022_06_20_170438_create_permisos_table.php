@@ -13,12 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('providers', function (Blueprint $table) {
+        Schema::create('permisos', function (Blueprint $table) {
             $table->id();
-            $table->string("nombre");
-            $table->string("celular")->nullable();
-            $table->unsignedBigInteger("negocio_id");
-            $table->foreign("negocio_id")->references("id")->on("negocios");
             $table->timestamps();
         });
     }
@@ -30,6 +26,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('providers');
+        Schema::dropIfExists('permisos');
     }
 };

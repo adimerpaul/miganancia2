@@ -20,10 +20,13 @@ return new class extends Migration
             $table->string("concepto");
             $table->string("medio");
             $table->string("valor");
+            $table->string("tipo");
             $table->unsignedBigInteger("cliente_id")->nullable();
             $table->foreign("cliente_id")->references("id")->on("clientes");
             $table->unsignedBigInteger("provider_id")->nullable();
             $table->foreign("provider_id")->references("id")->on("providers");
+            $table->unsignedBigInteger("negocio_id");
+            $table->foreign("negocio_id")->references("id")->on("negocios");
             $table->unsignedBigInteger("user_id")->nullable();
             $table->foreign("user_id")->references("id")->on("users");
             $table->timestamps();

@@ -44,8 +44,10 @@ class SaleController extends Controller
         $sale->concepto=$request->concepto;
         $sale->medio=$request->medio;
         $sale->valor=$request->valor;
+        $sale->tipo=$request->tipo;
         $sale->cliente_id=$request->cliente_id;
         $sale->provider_id=$request->provider_id;
+        $sale->negocio_id=$request->negocio_id;
         $sale->user_id=$request->user()->id;
         $sale->save();
         $data=[];

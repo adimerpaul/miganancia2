@@ -9,7 +9,7 @@
         <q-item v-if="store.isLoggedIn">
           <q-item-section>
             <div > <b>Bienvenido: </b> {{store.user.name}}
-              <!--              <pre>{{store.user}}</pre>-->
+                          <pre>{{store.permisos}}</pre>
               <!--              <pre>{{store.isLoggedIn}}</pre>-->
             </div>
           </q-item-section>

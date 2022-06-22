@@ -13,10 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('permisos', function (Blueprint $table) {
+        Schema::create('permiso_user', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre');
-
+            $table->unsignedBigInteger("permiso_id");
+            $table->foreign("permiso_id")->references("id")->on("permisos");
+            $table->unsignedBigInteger("user_id");
+            $table->foreign("user_id")->references("id")->on("users");
             $table->timestamps();
         });
     }
@@ -28,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('permisos');
+        Schema::dropIfExists('permiso_user');
     }
 };

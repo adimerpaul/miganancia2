@@ -334,8 +334,15 @@ export default {
     login(){
         this.$q.loading.show()
         this.$api.post('login', { email:this.email, password:this.password }).then((res) =>{
+          console.log(res.data.user.permisos)
           this.$q.loading.hide()
           this.store.user=res.data.user
+          this.store.permisos=[]
+            res.data.user.permisos.forEach(r => {
+              this.store.permisos.push(r.id);
+
+            });
+
           this.store.negocio=res.data.negocio
           localStorage.setItem('tokenmi', res.data.token)
           this.store.isLoggedIn=true

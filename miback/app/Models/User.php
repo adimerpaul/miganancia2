@@ -47,4 +47,8 @@ class User extends Authenticatable
     public function negocios(){
         return $this->hasMany(Negocio::class);
     }
+
+    public function permisos(){
+        return $this->belongsToMany(Permiso::class);
+    }
 }

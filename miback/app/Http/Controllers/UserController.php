@@ -45,7 +45,7 @@ class UserController extends Controller
             'password' => 'required',
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        $user = User::with('permisos')->where('email', $request->email)->first();
 
         if (! $user || ! Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
@@ -83,7 +83,9 @@ class UserController extends Controller
 //            ->with('negocios')
 //            ->firstOrFail();
         $negocio=Negocio::find($request->user()->minegocio);
-        return response()->json(['user'=>$request->user(),'negocio'=>$negocio],200);
+        $permisos=User::with('permisos')->where('id',$request->user()->id)->get();
+
+        return response()->json(['user'=>$request->user(),'negocio'=>$negocio,'permisos'=>$permisos[0]->permisos],200);
 
 //        return User::where('id',1)->with('unid')->get();
     }
@@ -116,6 +118,17 @@ class UserController extends Controller
     public function store(Request $request)
     {
         //
+        $request->validate([
+            'email'=>'required|unique:users|email',
+            'password' => 'required|confirmed|min:6',
+        ]);
+        $user=new User();
+        $user->name= $request->name;
+        $user->email=$request->email;
+        $user->password=Hash::make( $request->password);
+        $user->fechalimite=date('Y-m-d', strtotime(now(). ' + 360 days'));;
+        $user->minegocio=$request->negocio_id;
+        $user->save();
     }
 
     /**

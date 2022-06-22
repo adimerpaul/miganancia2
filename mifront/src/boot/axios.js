@@ -22,7 +22,7 @@ export default boot(({ app ,router}) => {
   if (token) {
     app.config.globalProperties.$api.defaults.headers.common['Authorization'] = 'Bearer '+token
     app.config.globalProperties.$api.post('me').then(res=>{
-      console.log(res.data)
+      // console.log(res.data)
       useCounterStore().user=res.data.user
       useCounterStore().negocio=res.data.negocio
       useCounterStore().permisos=[]

@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Provider;
 use App\Http\Requests\StoreProviderRequest;
 use App\Http\Requests\UpdateProviderRequest;
-
+use Illuminate\Http\Request;
 class ProviderController extends Controller
 {
     /**
@@ -13,9 +13,9 @@ class ProviderController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        return Provider::where('negocio_id',$request->user()->minegocio)->get();
     }
 
     /**
@@ -36,7 +36,7 @@ class ProviderController extends Controller
      */
     public function store(StoreProviderRequest $request)
     {
-        //
+        return Provider::create($request->all());
     }
 
     /**

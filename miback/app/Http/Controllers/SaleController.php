@@ -65,6 +65,7 @@ class SaleController extends Controller
             array_push($data, $d);
         }
         Detail::insert($data);
+        return $sale;
     }
 
     /**
@@ -98,7 +99,7 @@ class SaleController extends Controller
      */
     public function update(UpdateSaleRequest $request, Sale $sale)
     {
-        //
+        $sale->update($request->all());
     }
 
     /**

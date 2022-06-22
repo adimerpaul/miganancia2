@@ -11,6 +11,9 @@
     </q-header>
     <q-page class="q-pa-none">
       <div class="row">
+<!--        <div class="col-12">-->
+<!--          <iframe id="docpdf" src="" frameborder="0" style="width: 100%;height: 100vh"></iframe>-->
+<!--        </div>-->
         <div class="col-12 col-sm-7">
           <div class="row">
             <div class="col-12 col-sm-12 ">
@@ -200,7 +203,7 @@
                 <div class="text-bold text-caption">Selecciona el método de pago <span class="text-red">*</span></div>
                 <div class="row">
                   <div class="col-6">
-                    <q-card @click="updateMetodo('efectivo')" flat bordered class="q-pa-xs q-ma-xs text-center" :style="sale.medio=='efectivo'?'border: 1px solid green':'border: 1px solid grey'">
+                    <q-card @click="updateMetodo('efectivo')" flat bordered class="q-pa-xs q-ma-xs text-center" :style="sale.medio=='efectivo'?'border: 1px solid green;cursor: pointer':'border: 1px solid grey;cursor: pointer'">
                       <q-card-section class="q-pa-none">
                         <q-icon name="o_payments" size="30px" color="grey"/>
                       </q-card-section>
@@ -213,7 +216,7 @@
                     </q-card>
                   </div>
                   <div class="col-6">
-                    <q-card @click="updateMetodo('targeta')" flat bordered class="q-pa-xs q-ma-xs text-center" :style="sale.medio=='targeta'?'border: 1px solid green':'border: 1px solid grey'">
+                    <q-card @click="updateMetodo('targeta')" flat bordered class="q-pa-xs q-ma-xs text-center" :style="sale.medio=='targeta'?'border: 1px solid green;cursor: pointer':'border: 1px solid grey;cursor: pointer'">
                       <q-card-section class="q-pa-none">
                         <q-icon name="credit_card" size="30px" color="grey"/>
                       </q-card-section>
@@ -226,7 +229,7 @@
                     </q-card>
                   </div>
                   <div class="col-6">
-                    <q-card @click="updateMetodo('transferencia bancaria')" flat bordered class="q-pa-xs q-ma-xs text-center" :style="sale.medio=='transferencia bancaria'?'border: 1px solid green':'border: 1px solid grey'">
+                    <q-card @click="updateMetodo('transferencia bancaria')" flat bordered class="q-pa-xs q-ma-xs text-center" :style="sale.medio=='transferencia bancaria'?'border: 1px solid green;cursor: pointer':'border: 1px solid grey;cursor: pointer'">
                       <q-card-section class="q-pa-none">
                         <q-icon name="account_balance" size="30px" color="grey"/>
                       </q-card-section>
@@ -239,7 +242,7 @@
                     </q-card>
                   </div>
                   <div class="col-6">
-                    <q-card @click="updateMetodo('otro')" flat bordered class="q-pa-xs q-ma-xs text-center" :style="sale.medio=='otro'?'border: 1px solid green':'border: 1px solid grey'">
+                    <q-card @click="updateMetodo('otro')" flat bordered class="q-pa-xs q-ma-xs text-center" :style="sale.medio=='otro'?'border: 1px solid green;cursor: pointer':'border: 1px solid grey;cursor: pointer'">
                       <q-card-section class="q-pa-none">
                         <q-icon name="list_alt" size="30px" color="grey"/>
                       </q-card-section>
@@ -255,22 +258,22 @@
               </div>
               <div class="col-12">
                 <div class="text-bold text-caption">Agrega un cliente a la venta <span class="text-grey">(opcional)</span></div>
-              </div>
-              <div class="col-12 q-py-md">
-                <q-btn label="Confirmar venta" no-caps color="warning"  class=" text-build text-black full-width" type="submit"/>
                 <q-select
                   dense
                   outlined
+                  use-input
+                  @filter="filterFn"
+                  input-debounce="0"
                   v-model="sale.clientes"
                   :options="clientesOption"
-                  label="Cliente"
+                  label="Busca un cliente o registra uno nuevo..."
                 >
                   <template v-slot:prepend>
                     <q-icon name="search" />
                   </template>
                   <template v-slot:option="scope">
-                    <q-item v-bind="scope.itemProps" @click="clickCreateCategoriaProd(scope.opt)">
-                      <q-item-section avatar v-if="scope.opt.label=='Crear una nueva categoría'">
+                    <q-item v-bind="scope.itemProps" @click="clickCreateCliente(scope.opt)" :style="scope.opt.label=='Registrar un nuevo cliente'?'border: 1px solid black':''">
+                      <q-item-section avatar v-if="scope.opt.label=='Registrar un nuevo cliente'">
                         <q-icon name="add_circle_outline" />
                       </q-item-section>
                       <q-item-section>
@@ -280,6 +283,90 @@
                   </template>
                 </q-select>
               </div>
+              <div class="col-12 q-py-md">
+                <q-btn label="Confirmar venta" no-caps color="warning"  class=" text-build text-black full-width" type="submit"/>
+              </div>
+            </div>
+          </q-form>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="dialogCliente" position="right" full-height :maximized="true">
+      <q-card style="width: 450px; max-width: 80vw;">
+        <q-card-section class="row items-center q-pb-none">
+          <div class="text-h6">Nuevo cliente</div>
+          <q-space />
+          <q-btn icon="cancel" flat round dense v-close-popup />
+        </q-card-section>
+        <q-card-section class="row items-center no-wrap">
+          <q-form @submit.prevent="createCliente">
+            <div class="row">
+              <div class="col-12">
+                <div class="text-caption text-bold">Los campos marcados con asterisco (<span class="text-red">*</span>) son obligatorios</div>
+              </div>
+              <div class="col-12">
+                <div class="text-caption text-bold">Nombre completo <span class="text-red">*</span></div>
+                <q-input dense outlined v-model="cliente.nombre" label="Nombre cliente*" hint="Porfavor ingresar nombre cliente" :rules="rule" required clearable counter>
+                  <template v-slot:prepend>
+                    <q-icon name="person_outline" />
+                  </template>
+                </q-input>
+              </div>
+              <div class="col-12">
+                <div class="text-caption text-bold">Número de celular <span class="text-grey">(opcional)</span></div>
+                <q-input dense outlined v-model="cliente.celular" type="number" label="Número de celular" hint="Porfavor ingresar numero de celular" clearable counter>
+                  <template v-slot:prepend>
+                    <q-icon name="phone" />
+                  </template>
+                </q-input>
+              </div>
+              <div class="col-12 q-py-md">
+                <q-btn label="Crear cliente" no-caps color="warning"  class=" text-build text-black full-width" type="submit"/>
+              </div>
+            </div>
+          </q-form>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="dialogCreasteVenta" position="right" full-height :maximized="true">
+      <q-card style="width: 450px; max-width: 80vw;">
+        <q-card-section class="row items-center q-pb-none">
+          <div class="text-h6">¡Creaste una venta!</div>
+          <q-space />
+          <q-btn icon="cancel" flat round dense v-close-popup />
+        </q-card-section>
+        <q-card-section class="row items-center no-wrap">
+          <q-form @submit.prevent="updateSale">
+            <div class="row">
+              <div class="col-12 text-center q-pb-lg">
+                <q-icon name="o_check_circle" size="50px" color="green"/>
+                <div class="text-bold text-caption text-grey">Se registró en tu balance por un valor de <span class="text-black text-bold">Bs {{valorUltimaVenta}}</span></div>
+              </div>
+              <div class="col-12">
+                <div class="text-caption text-bold">¿Quieres darle un nombre a esta venta?</div>
+                <q-input dense outlined v-model="concepto" placeholder="Escríbelo aquí (opcional)" clearable counter>
+                  <template v-slot:prepend>
+                    <q-icon name="description" />
+                  </template>
+                </q-input>
+              </div>
+              <div class="col-12">
+                <q-card class="bg-grey-3" flat bordered>
+                  <q-card-section>
+                    <div class="text-bold text-caption">
+                      Comprobante
+                    </div>
+                    <div class="text-bold text-caption text-grey">
+                      Puedes descargar el comprobante de venta.
+                    </div>
+                    <q-btn class="full-width" @click="comprobante" outline color="blue" label="Descarga el comprobante" icon="download" />
+                  </q-card-section>
+                </q-card>
+              </div>
+              <div class="col-12 q-py-md">
+                <q-btn label="Nueva venta" no-caps color="warning"  class=" text-build text-black full-width" type="submit"/>
+                <q-btn label="Ir a Balance" to="/home" no-caps outline  class=" text-build text-black full-width"/>
+              </div>
             </div>
           </q-form>
         </q-card-section>
@@ -288,19 +375,26 @@
   </div>
 </template>
 <script>
-
 import {useCounterStore} from "stores/example-store";
 import {date} from "quasar";
-
+import { jsPDF } from "jspdf";
+import $ from 'jquery'
+import moment from 'moment'
+moment.locale('es')
 export default {
   name: `Venta`,
   data(){
     return {
+      dialogCreasteVenta:false,
+      dialogCliente:false,
       dialogSale:false,
       url: process.env.API,
       store:useCounterStore(),
       sale:{},
+      concepto:'',
       clientesOption:[],
+      clientesOption2:[],
+      cliente:{},
       ordenar:{label: 'Productos más vendidos',value: 'Productos más vendidos',icon:'list'},
       categoriaver:{
         label: 'Ver todas las categorias',
@@ -324,6 +418,8 @@ export default {
       optionsCategoriasVer:[],
       filterProducto:'',
       productosVenta:[],
+      valorUltimaVenta:0,
+      finSale:0,
       rule:[
         val => (val && val.length > 0) || 'Por favor escriba algo'
       ],
@@ -339,10 +435,105 @@ export default {
     this.misclientes()
     this.miscategorias()
   },
+  mounted() {
+
+  },
   methods:{
+    comprobante(){
+      var doc = new jsPDF()
+      var img = new Image()
+      img.src = 'logo.jpg'
+      doc.addImage(img, 'jpg', 5, 5, 10, 10)
+      doc.setFont('times', 'bold')
+      doc.setFontSize(8)
+      doc.text('Gobierno Autónomo',29,9,'center')
+      doc.text('Municipal de Oruro',29,12,'center')
+      doc.setFontSize(12)
+      doc.text(this.store.negocio.nombre,85,10,'center')
+      doc.setFont('times', 'normal')
+      doc.setFontSize(9)
+      doc.text('Tipo:',135,8)
+      doc.text('Direccion:',135,11)
+      doc.text('Ciudad:',135,14)
+      doc.setFont('times', 'bold')
+      doc.text(this.store.negocio.tipo==null?'':this.store.negocio.tipo,150,8)
+      doc.text(this.store.negocio.direccion==null?'':this.store.negocio.direccion,150,11)
+      doc.text(this.store.negocio.ciudad==null?'':this.store.negocio.ciudad,150,14)
+      doc.setDrawColor(169,169,169)
+      doc.line(5,16,205,16)
+      doc.setFont('times', 'normal')
+      doc.setFontSize(10)
+      doc.text('Fecha de la transacción',10,20)
+      doc.setFont('times', 'bold')
+      doc.text(moment().format('LLL'),45,20)
+      doc.setFont('times', 'normal')
+      doc.setFontSize(10)
+      doc.text('Contacto',100,20)
+      doc.setFont('times', 'bold')
+      doc.text(this.finSale.clientes==undefined?'':this.finSale.clientes.label,115,20)
+      doc.text('Productos',10,25)
+      doc.text('Cantidad',120,25)
+      doc.text('Precio unitario',150,25)
+      doc.text('Valor',190,25)
+      doc.setFont('times', 'normal')
+      doc.line(5,26,205,26)
+      let y=30
+
+      this.finSale.productos.forEach(p=>{
+        // console.log(p)
+        doc.text(p.nombre.toString(),10,y)
+        doc.text(p.cantidadVenta.toString(),120,y)
+        doc.text(p.precioVenta.toString(),150,y)
+        doc.text((p.cantidadVenta*p.precioVenta)+' Bs',200,y,'right')
+        y+=5
+      })
+      doc.setFont('times', 'bold')
+      doc.text('Total:',10,y)
+      doc.text(this.finSale.valor+' Bs',200,y,'right')
+
+      // $( '#docpdf' ).attr('src', doc.output('datauristring'))
+      window.open(doc.output('bloburl'), '_blank');
+    },
+    updateSale(){
+      this.dialogCreasteVenta=false
+      this.$api.put('sale/'+this.finSale.id,{concepto:this.concepto})
+    },
+    createCliente(){
+      this.cliente.negocio_id=this.store.negocio.id
+      this.$api.post('cliente',this.cliente).then(res=>{
+        this.dialogCliente=false
+        this.cliente={}
+        this.misclientes()
+        this.$q.notify({
+          message:'Cliente creado correctamente',
+          color:'green',
+          icon:'check'
+        })
+      })
+    },
+    clickCreateCliente(c){
+      if (c.id==0){
+        this.sale.clientes=''
+        this.dialogCliente=true
+      }
+    },
     misclientes(){
       this.$api.get('cliente').then(res=>{
-        this.clientesOption=res.data
+        this.clientesOption=[]
+        res.data.forEach(c=>{
+          this.clientesOption.push({
+            label: c.nombre,
+            value: c.nombre,
+            id:c.id
+          })
+        })
+        this.clientesOption.push({
+          label: 'Registrar un nuevo cliente',
+          value: 'Registrar un nuevo cliente',
+          id: 0
+        })
+        this.clientesOption2=this.clientesOption
+        // this.clientesOption=res.data
       })
     },
     updateMetodo(medio){
@@ -356,16 +547,44 @@ export default {
       }
     },
     createSale(){
-
+      this.$q.loading.show()
+      let concepto=''
+      this.productosVenta.forEach(p=>{
+        concepto+=p.cantidadVenta+' '+p.nombre+','
+      })
+      this.sale.concepto=concepto
+      this.sale.valor=this.total
+      this.valorUltimaVenta=this.total
+      this.sale.tipo='VENTA'
+      if (this.sale.clientes==undefined){
+        this.sale.cliente_id=null
+      }else {
+        this.sale.cliente_id=this.sale.clientes.id
+      }
+      this.sale.provider_id=null
+      this.sale.negocio_id=this.store.negocio.id
+      this.sale.productos=this.productosVenta
+      this.finSale=this.sale
+      this.$api.post('sale',this.sale).then(res=>{
+        this.finSale.id=res.data.id
+        this.productosVenta=[]
+        this.misproductos()
+        this.dialogSale=false
+        this.dialogCreasteVenta=true
+        this.$q.notify({
+          message:'Venta realizada',
+          color:'green',
+          icon:'check'
+        })
+      })
     },
     async vaciarCanasta() {
-      let dato =await this.productosVenta.forEach(p => {
+      await this.productosVenta.forEach(p => {
         p.cantidad = p.cantidadReal
         p.cantidadVenta = 0
         p.cantidadPedida = 0
       })
       this.productosVenta=[]
-      // console.log(dato)
     },
     cambioNumero(n,i){
       if (n.cantidadVenta!=''){
@@ -403,6 +622,32 @@ export default {
       p.cantidadVenta=0
       p.cantidadPedida=0
     },
+    filterFn (val, update) {
+      this.clientesOption.pop()
+      if (val === '') {
+        update(() => {
+          this.clientesOption = this.clientesOption2
+          // here you have access to "ref" which
+          // is the Vue reference of the QSelect
+        })
+        this.clientesOption.push({
+          label: 'Registrar un nuevo cliente',
+          value: 'Registrar un nuevo cliente',
+          id: 0
+        })
+        return
+      }
+      update(() => {
+        const needle = val.toLowerCase()
+        this.clientesOption = this.clientesOption2.filter(v => v.value.toLowerCase().indexOf(needle) > -1)
+        this.clientesOption.push({
+          label: 'Registrar un nuevo cliente',
+          value: 'Registrar un nuevo cliente',
+          id: 0
+        })
+      })
+
+    },
     buscarProducto(filterProducto){
       if(filterProducto!=null){
         const needle = filterProducto.toLowerCase()
@@ -414,6 +659,7 @@ export default {
     },
     misproductos(){
       this.$api.get('producto').then(res=>{
+        this.productos=[]
         this.$q.loading.hide()
         res.data.forEach(p=>{
           p.cantidadPedida=0

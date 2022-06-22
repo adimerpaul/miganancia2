@@ -15,9 +15,9 @@ return new class extends Migration
     {
         Schema::create('negocios', function (Blueprint $table) {
             $table->id();
+            $table->string("nombre")->default('')->nullable();
             $table->string("foto")->default('')->nullable();
             $table->string("tipo")->default('')->nullable();
-            $table->string("nombre")->default('')->nullable();
             $table->string("direccion")->default('')->nullable();
             $table->string("ciudad")->default('')->nullable();
             $table->unsignedBigInteger("user_id");

@@ -796,7 +796,7 @@ export default {
       ],
       ruleNumber: [
         val => (val !== null && val !== '') || 'Por favor escriba su cantidad',
-        val => (val >= 0 && val < 10000) || 'Por favor escriba una cantidad real'
+        // val => (val >= 0 && val < 10000) || 'Por favor escriba una cantidad real'
       ],
     }
   },

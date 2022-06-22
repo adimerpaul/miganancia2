@@ -3,13 +3,12 @@
     <q-drawer v-model="store.leftDrawerOpen" show-if-above bordered>
       <q-list  class="full-width">
         <q-item >
-          <q-img src="/logo.png" spinner-color="white" style="height: 28px; max-width: 30px" />
+          <q-img src="/logo.jpg" spinner-color="white" style="height: 28px; max-width: 30px" />
           <q-item-section class="text-center text-bold">Mi Ganancia.com</q-item-section>
         </q-item>
         <q-item v-if="store.isLoggedIn">
           <q-item-section>
             <div > <b>Bienvenido: </b> {{store.user.name}}
-                          <pre>{{store.permisos}}</pre>
               <!--              <pre>{{store.isLoggedIn}}</pre>-->
             </div>
           </q-item-section>

@@ -83,7 +83,7 @@ module.exports = configure(function (ctx) {
       env: {
         API: ctx.dev
           ? 'http://localhost:8000/api/'
-          : 'https://prod.api.com'
+          : 'https://back.miganancia.cf/api'
       }
 
     },
@@ -165,36 +165,36 @@ module.exports = configure(function (ctx) {
 
 
       manifest: {
-        name: `Quasar App`,
-        short_name: `Quasar App`,
-        description: `A Quasar Project`,
+        name: `Mi ganancia`,
+        short_name: `Mi ganancia`,
+        description: `Mi ganancia`,
         display: 'standalone',
         orientation: 'portrait',
         background_color: '#ffffff',
-        theme_color: '#027be3',
+        theme_color: '#650101',
         icons: [
           {
-            src: 'icons/icon-128x128.png',
+            src: 'logo.jpg',
             sizes: '128x128',
             type: 'image/png'
           },
           {
-            src: 'icons/icon-192x192.png',
+            src: 'logo.jpg',
             sizes: '192x192',
             type: 'image/png'
           },
           {
-            src: 'icons/icon-256x256.png',
+            src: 'logo.jpg',
             sizes: '256x256',
             type: 'image/png'
           },
           {
-            src: 'icons/icon-384x384.png',
+            src: 'logo.jpg',
             sizes: '384x384',
             type: 'image/png'
           },
           {
-            src: 'icons/icon-512x512.png',
+            src: 'logo.jpg',
             sizes: '512x512',
             type: 'image/png'
           }

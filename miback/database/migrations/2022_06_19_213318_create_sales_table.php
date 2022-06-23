@@ -15,9 +15,10 @@ return new class extends Migration
     {
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
+            $table->string("concepto");
+            $table->integer("num");
             $table->date("fecha");
             $table->time("hora");
-            $table->string("concepto");
             $table->string("medio");
             $table->string("valor");
             $table->string("tipo");
@@ -29,6 +30,7 @@ return new class extends Migration
             $table->foreign("negocio_id")->references("id")->on("negocios");
             $table->unsignedBigInteger("user_id")->nullable();
             $table->foreign("user_id")->references("id")->on("users");
+            $table->softDeletes();
             $table->timestamps();
         });
     }

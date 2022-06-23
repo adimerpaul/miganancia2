@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string("celular")->nullable();
             $table->unsignedBigInteger("negocio_id");
             $table->foreign("negocio_id")->references("id")->on("negocios");
+            $table->softDeletes();
             $table->timestamps();
         });
     }

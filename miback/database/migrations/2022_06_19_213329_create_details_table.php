@@ -22,6 +22,7 @@ return new class extends Migration
             $table->foreign("sale_id")->references("id")->on("sales");
             $table->unsignedBigInteger("producto_id")->nullable();
             $table->foreign("producto_id")->references("id")->on("productos");
+            $table->softDeletes();
             $table->timestamps();
         });
     }

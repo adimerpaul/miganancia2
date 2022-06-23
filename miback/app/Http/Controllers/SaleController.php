@@ -38,7 +38,9 @@ class SaleController extends Controller
      */
     public function store(StoreSaleRequest $request)
     {
+        $num=Sale::where('negocio_id',$request->negocio_id)->get()->count()+1;
         $sale=new Sale();
+        $sale->num=$num+1;
         $sale->fecha=date('Y-m-d');
         $sale->hora=date('H:i:s');
         $sale->concepto=$request->concepto;

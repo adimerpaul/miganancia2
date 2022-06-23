@@ -28,6 +28,7 @@ return new class extends Migration
             $table->foreign("negocio_id")->references("id")->on("negocios");
             $table->unsignedBigInteger("categoria_id")->nullable()->default(null);
             $table->foreign("categoria_id")->references("id")->on("categorias");
+            $table->softDeletes();
             $table->timestamps();
         });
     }

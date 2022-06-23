@@ -303,6 +303,7 @@ export default {
     },
     createProvider(){
       this.provider.negocio_id=this.store.negocio.id
+      this.$q.loading.show()
       this.$api.post('provider',this.provider).then(res=>{
         this.dialogProvider=false
         this.provider={}
@@ -322,6 +323,7 @@ export default {
     },
     myProvides(){
       this.$api.get('provider').then(res=>{
+        this.$q.loading.hide()
         this.providersOption=[]
         res.data.forEach(c=>{
           this.providersOption.push({

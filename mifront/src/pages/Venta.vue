@@ -496,6 +496,7 @@ export default {
     },
     updateSale(){
       this.dialogCreasteVenta=false
+      if (this.concepto!='')
       this.$api.put('sale/'+this.finSale.id,{concepto:this.concepto})
     },
     createCliente(){

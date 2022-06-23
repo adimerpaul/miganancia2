@@ -60,7 +60,7 @@
         <div class="col-6 col-sm-3 q-pa-xs ">
           <q-btn icon="download" flat outline label="Descargar reporte" no-caps class="full-width" />
         </div>
-        <div class="col-12 col-sm-4 q-pa-none">
+        <div class="col-6 col-sm-4 q-pa-none">
           <q-card bordered flat>
             <q-item >
               <q-item-section avatar >
@@ -68,12 +68,12 @@
               </q-item-section>
               <q-item-section>
                 <q-item-label class="text-subtitle2 text-grey">Utilidad total</q-item-label>
-                <q-item-label class="text-h5 text-black">{{costototal}} Bs</q-item-label>
+                <q-item-label class="text-h5 text-black">{{utilidadTotal}} Bs</q-item-label>
               </q-item-section>
             </q-item>
           </q-card>
         </div>
-        <div class="col-12 col-sm-4 q-pa-none">
+        <div class="col-6 col-sm-4 q-pa-none">
           <q-card bordered flat>
             <q-item >
               <q-item-section avatar >
@@ -81,12 +81,12 @@
               </q-item-section>
               <q-item-section>
                 <q-item-label class="text-subtitle2 text-grey">Ventas totales</q-item-label>
-                <q-item-label class="text-h5 text-green">{{costototal}} Bs</q-item-label>
+                <q-item-label class="text-h5 text-green">{{ventasTotal}} Bs</q-item-label>
               </q-item-section>
             </q-item>
           </q-card>
         </div>
-        <div class="col-12 col-sm-4 q-pa-none">
+        <div class="col-6 col-sm-4 q-pa-none">
           <q-card bordered flat>
             <q-item >
               <q-item-section avatar >
@@ -94,14 +94,58 @@
               </q-item-section>
               <q-item-section>
                 <q-item-label class="text-subtitle2 text-grey">Gastos totales</q-item-label>
-                <q-item-label class="text-h5 text-red">{{costototal}} Bs</q-item-label>
+                <q-item-label class="text-h5 text-red">{{gastoTotal}} Bs</q-item-label>
               </q-item-section>
             </q-item>
           </q-card>
         </div>
         <div class="col-12">
-          <q-table dense :columns="colums" hide-bottom flat bordered>
-
+          <q-table dense :columns="colums" :rows="sales" hide-bottom flat bordered :rows-per-page-options="[0]">
+            <template v-slot:body="props">
+              <q-tr :props="props">
+                <q-td key="Acciones" auto-width :props="props">
+                  <q-avatar square  icon="local_atm" :color="props.row.tipo=='VENTA'?'red-1':'green-1'" :text-color="props.row.tipo=='VENTA'?'red':'green'" />
+                  <q-icon name="o_delete" color="red" size="20px">
+                    <q-tooltip>
+                      Eliminar
+                    </q-tooltip>
+                  </q-icon>
+                  <q-icon name="description" color="grey" size="20px">
+                    <q-tooltip>
+                      Descargar comprobante
+                    </q-tooltip>
+                  </q-icon>
+                  <q-icon name="o_edit" color="grey" size="20px">
+                    <q-tooltip>
+                      Editar
+                    </q-tooltip>
+                  </q-icon>
+                </q-td>
+                <q-td key="Fecha" :props="props">
+                  {{ formatoFecha(props.row.fecha,props.row.hora) }}
+                </q-td>
+                <td key="Cliente/Proveedores" :props="props">
+                  <div v-if="props.row.cliente!=null">
+                    {{props.row.cliente.nombre}}
+                  </div>
+                  <div v-else-if="props.row.provider!=null">
+                    {{props.row.provider.nombre}}
+                  </div>
+                  <div v-else>
+                    -
+                  </div>
+                </td>
+                <td key="Concepto" :props="props">
+                  {{props.row.concepto}}
+                </td>
+                <td key="Medio de pago" :props="props">
+                  {{props.row.medio}}
+                </td>
+                <td key="Valor" :props="props" class="text-right">
+                  {{props.row.valor}} Bs.
+                </td>
+              </q-tr>
+            </template>
           </q-table>
         </div>
       </div>
@@ -125,6 +169,22 @@
                   <q-input dense outlined type="date" v-model="sale.fecha" label="Fecha de la venta*" hint="Porfavor ingresar Fecha de la venta" :rules="rule" required>
                     <template v-slot:prepend>
                       <q-icon name="event" />
+                    </template>
+                  </q-input>
+                </div>
+                <div class="col-12">
+                  <div class="text-caption text-bold">Valor <span class="text-red">*</span></div>
+                  <q-input dense outlined v-model="sale.valor" label="Valor*" hint="Porfavor ingresar valor del gasto" type="number" :rules="ruleNumber" required clearable counter>
+                    <template v-slot:prepend>
+                      <q-icon name="money" />
+                    </template>
+                  </q-input>
+                </div>
+                <div class="col-12">
+                  <div class="text-caption text-bold">¿Quieres darle un nombre a este gasto?</div>
+                  <q-input dense outlined v-model="sale.concepto" label="¿Quieres darle un nombre a este gasto?" clearable counter>
+                    <template v-slot:prepend>
+                      <q-icon name="description" />
                     </template>
                   </q-input>
                 </div>
@@ -195,7 +255,7 @@
                     input-debounce="0"
                     v-model="sale.providers"
                     :options="providersOption"
-                    label="Busca un cliente o registra uno nuevo..."
+                    label="Busca un proveedor o registra uno nuevo..."
                   >
                     <template v-slot:prepend>
                       <q-icon name="search" />
@@ -213,7 +273,7 @@
                   </q-select>
                 </div>
                 <div class="col-12 q-py-md">
-                  <q-btn label="Confirmar venta" no-caps color="warning"  class=" text-build text-black full-width" type="submit"/>
+                  <q-btn label="Crear gasto" no-caps color="warning"  class=" text-build text-black full-width" type="submit"/>
                 </div>
               </div>
             </q-form>
@@ -264,6 +324,8 @@
 <script>
 import {useCounterStore} from "stores/example-store"
 import {date} from "quasar";
+import moment from 'moment'
+moment.locale('es')
 export default {
   name: `Home`,
   data(){
@@ -272,16 +334,17 @@ export default {
       dialogProvider:false,
       store: useCounterStore(),
       colums:[
-        {name:'Fecha',label:'Fecha',field:'Fecha'},
-        {name:'Cliente/Proveedores',label:'Cliente/Proveedores',field:'Cliente/Proveedores'},
-        {name:'Concepto',label:'Concepto',field:'Concepto'},
-        {name:'Medio de pago',label:'Medio de pago',field:'Medio de pago'},
-        {name:'Valor',label:'Valor',field:'Valor'},
-        {name:'Acciones',label:'Acciones',field:'Acciones'},
+        {name:'Acciones',label:'Acciones',field:'Acciones',align:'center'},
+        {name:'Fecha',label:'Fecha',field:'Fecha',align:'left'},
+        {name:'Cliente/Proveedores',label:'Cliente/Proveedores',field:'Cliente/Proveedores',align:'left'},
+        {name:'Concepto',label:'Concepto',field:'Concepto',align:'left'},
+        {name:'Medio de pago',label:'Medio de pago',field:'Medio de pago',align:'left'},
+        {name:'Valor',label:'Valor',field:'Valor',align:'right'},
       ],
       fechas:{desde:date.formatDate(new Date(),'YYYY-MM-DD'),hasta:date.formatDate(new Date(),'YYYY-MM-DD')},
       buscar:'',
       sale:{},
+      sales:[],
       providersOption:[],
       providersOption2:[],
       provider:{},
@@ -290,14 +353,23 @@ export default {
       ],
       ruleNumber: [
         val => (val !== null && val !== '') || 'Por favor escriba su cantidad',
-        val => (val >= 0 && val < 10000) || 'Por favor escriba una cantidad real'
+        val => (val >= 0 && val < 100000) || 'Por favor escriba una cantidad real'
       ],
     }
   },
   created() {
     this.myProvides()
+    this.mySales()
   },
   methods:{
+    formatoFecha(f,h){
+      return moment(f).format('LL')+'|'+h.toString().substring(0,5)
+    },
+    mySales(){
+      this.$api.post('consultsale',this.fechas).then(res=>{
+        this.sales=res.data
+      })
+    },
     updateMetodo(medio){
       this.sale.medio=medio
     },
@@ -376,31 +448,25 @@ export default {
     },
     createSale(){
       this.$q.loading.show()
-      let concepto=''
-      this.productosVenta.forEach(p=>{
-        concepto+=p.cantidadVenta+' '+p.nombre+','
-      })
-      this.sale.concepto=concepto
-      this.sale.valor=this.total
-      this.valorUltimaVenta=this.total
-      this.sale.tipo='VENTA'
-      if (this.sale.clientes==undefined){
-        this.sale.cliente_id=null
+      this.sale.tipo='GASTO'
+      if (this.sale.providers==undefined){
+        this.sale.provider_id=null
       }else {
-        this.sale.cliente_id=this.sale.clientes.id
+        this.sale.provider_id=this.sale.providers.id
       }
-      this.sale.provider_id=null
+      this.sale.cliente_id=null
       this.sale.negocio_id=this.store.negocio.id
-      this.sale.productos=this.productosVenta
-      this.finSale=this.sale
+      this.sale.productos=[]
+      // this.finSale=this.sale
       this.$api.post('sale',this.sale).then(res=>{
-        this.finSale.id=res.data.id
-        this.productosVenta=[]
-        this.misproductos()
+        // console.log(res.data)
+        // return false
+        // this.productosVenta=[]
+        // this.misproductos()
+        this.$q.loading.hide()
         this.dialogSale=false
-        this.dialogCreasteVenta=true
         this.$q.notify({
-          message:'Venta realizada',
+          message:'Gasto realizada',
           color:'green',
           icon:'check'
         })
@@ -410,7 +476,33 @@ export default {
   computed:{
     costototal(){
       return 0
-    }
+    },
+    utilidadTotal(){
+      let v=0,g=0
+      this.sales.forEach(s=>{
+        if (s.tipo=='VENTA')
+          v+=parseFloat(s.valor)
+        if (s.tipo=='GASTO')
+          g+=parseFloat(s.valor)
+      })
+      return (v-g).toFixed(2)
+    },
+    ventasTotal(){
+      let v=0
+      this.sales.forEach(s=>{
+        if (s.tipo=='VENTA')
+          v+=parseFloat(s.valor)
+      })
+      return (v).toFixed(2)
+    },
+    gastoTotal(){
+      let g=0
+      this.sales.forEach(s=>{
+        if (s.tipo=='GASTO')
+          g+=parseFloat(s.valor)
+      })
+      return (g).toFixed(2)
+    },
   }
 }
 </script>

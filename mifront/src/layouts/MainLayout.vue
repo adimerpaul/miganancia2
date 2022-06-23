@@ -59,14 +59,14 @@
             <q-item-label>Inventario</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item active-class="active" style="font-weight: bold" exact to="deudas" clickable v-if="store.isLoggedIn">
-          <q-item-section avatar>
-            <q-icon name="pending_actions" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Deudas</q-item-label>
-          </q-item-section>
-        </q-item>
+<!--        <q-item active-class="active" style="font-weight: bold" exact to="deudas" clickable v-if="store.isLoggedIn">-->
+<!--          <q-item-section avatar>-->
+<!--            <q-icon name="pending_actions" />-->
+<!--          </q-item-section>-->
+<!--          <q-item-section>-->
+<!--            <q-item-label>Deudas</q-item-label>-->
+<!--          </q-item-section>-->
+<!--        </q-item>-->
         <div style="position: absolute;bottom: 0px" class="full-width">
           <q-list  >
             <q-item class="full-width text-grey" clickable v-if="store.isLoggedIn">
@@ -531,3 +531,11 @@ export default {
   // }
 }
 </script>
+<style scoped>
+.active{
+  background: rgb(255,238,179);
+  font-weight: bold;
+  color: #2d3748;
+  border-left: 5px solid #FECB18;
+}
+</style>

@@ -22,4 +22,13 @@ class Sale extends Model
         "negocio_id",
         "num",
     ];
+    public function cliente(){
+        return $this->belongsTo(Cliente::class);
+    }
+    public function provider(){
+        return $this->belongsTo(Provider::class);
+    }
+    public function details(){
+        return $this->hasMany(Detail::class);
+    }
 }

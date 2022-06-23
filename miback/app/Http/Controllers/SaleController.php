@@ -7,6 +7,7 @@ use App\Models\Producto;
 use App\Models\Sale;
 use App\Http\Requests\StoreSaleRequest;
 use App\Http\Requests\UpdateSaleRequest;
+use Illuminate\Http\Request;
 
 class SaleController extends Controller
 {
@@ -15,9 +16,18 @@ class SaleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+
+    }
+    public function consultSale(Request $request){
+        return Sale::with('details')
+            ->with('cliente')
+            ->with('provider')
+            ->where('negocio_id',$request->user()->minegocio)
+            ->whereDate('fecha','>=',$request->desde)
+            ->whereDate('fecha','<=',$request->hasta)
+            ->get();
     }
 
     /**
@@ -40,10 +50,10 @@ class SaleController extends Controller
     {
         $num=Sale::where('negocio_id',$request->negocio_id)->get()->count()+1;
         $sale=new Sale();
-        $sale->num=$num+1;
+        $sale->num=$num;
         $sale->fecha=date('Y-m-d');
         $sale->hora=date('H:i:s');
-        $sale->concepto=$request->concepto;
+        $sale->concepto=$request->concepto==null?'Transacción '.$num:$request->concepto;
         $sale->medio=$request->medio;
         $sale->valor=$request->valor;
         $sale->tipo=$request->tipo;

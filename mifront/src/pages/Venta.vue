@@ -663,7 +663,7 @@ export default {
         this.productos=[]
         this.$q.loading.hide()
         res.data.forEach(p=>{
-          if(p.visible){
+          if(p.visible==1){
           p.cantidadPedida=0
           p.cantidadReal=p.cantidad
           this.productos.push(p)}

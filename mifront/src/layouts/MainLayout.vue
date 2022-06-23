@@ -4,7 +4,7 @@
       <q-list  class="full-width">
         <q-item >
           <q-img src="/logo.jpg" spinner-color="white" style="height: 28px; max-width: 30px" />
-          <q-item-section class="text-center text-bold">Mi Ganancia.com</q-item-section>
+          <q-item-section class="text-center text-bold">Mi Ganancia</q-item-section>
         </q-item>
         <q-item v-if="store.isLoggedIn">
           <q-item-section>

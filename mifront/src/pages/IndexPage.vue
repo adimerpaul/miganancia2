@@ -4,7 +4,7 @@
       <q-toolbar>
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="this.store.leftDrawerOpen = !this.store.leftDrawerOpen"/>
         <q-toolbar-title class="text-bold">
-          Mi Ganancia.com
+          Mi Ganancia
         </q-toolbar-title>
 <!--        <div>Quasar v{{ $q.version }}</div>-->
       </q-toolbar>

@@ -8,7 +8,7 @@
           round
           icon="menu"
           aria-label="Menu"
-          @click="store.toggleLeftDrawer"
+          @click="this.store.leftDrawerOpen = !this.store.leftDrawerOpen"
         />
         <q-toolbar-title class="text-bold">
           Inventario

@@ -18,7 +18,9 @@
             <q-card class="q-pa-none bg-grey-3" v-if="store.isLoggedIn">
               <q-card-section horizontal>
                 <q-card-section class="q-pa-none q-ma-none flex flex-center">
-                  <q-img v-if="store.negocio!={}&&store.negocio.foto!=undefined" :src="url+'../imagenes/'+store.negocio.foto" class="q-ma-xs" style="border:0px solid black;height: 50px;width: 50px;border-radius: 25px"/>
+                  <a :href="url+'../imagenes/'+store.negocio.foto" target="_blank">
+                    <q-img v-if="store.negocio!={}&&store.negocio.foto!=undefined" :src="url+'../imagenes/'+store.negocio.foto" class="q-ma-xs" style="border:0px solid black;height: 50px;width: 50px;border-radius: 25px"/>
+                  </a>
                 </q-card-section>
                 <q-card-section class="q-pa-none q-ma-none flex flex-center">
                   <q-card-section class="q-pa-none q-ma-none" horizontal>

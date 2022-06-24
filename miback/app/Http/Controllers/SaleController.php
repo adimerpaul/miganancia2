@@ -27,6 +27,7 @@ class SaleController extends Controller
             ->where('negocio_id',$request->user()->minegocio)
             ->whereDate('fecha','>=',$request->desde)
             ->whereDate('fecha','<=',$request->hasta)
+            ->orderBy('id','desc')
             ->get();
     }
 

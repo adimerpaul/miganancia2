@@ -25,15 +25,15 @@
                 <q-item-label caption>Registra una venta seleccionando los productos de tu inventario.</q-item-label>
               </q-item-section>
             </q-item>
-            <q-item clickable v-close-popup>
-              <q-item-section avatar>
-                <q-avatar icon="local_atm" color="grey" text-color="white" />
-              </q-item-section>
+<!--            <q-item clickable v-close-popup>-->
+<!--              <q-item-section avatar>-->
+<!--                <q-avatar icon="local_atm" color="grey" text-color="white" />-->
+<!--              </q-item-section>-->
 <!--              <q-item-section>-->
 <!--                <q-item-label>Venta libre</q-item-label>-->
 <!--                <q-item-label caption>Registra un ingreso sin seleccionar productos de tu inventario.</q-item-label>-->
 <!--              </q-item-section>-->
-            </q-item>
+<!--            </q-item>-->
           </q-list>
         </q-btn-dropdown>
         <q-btn color="red-10" @click="clickSale" :label="$q.screen.lt.md?'':'Nuevo gasto'" class="q-ml-xs" icon="remove_circle_outline" no-caps/>
@@ -104,7 +104,7 @@
             <template v-slot:body="props">
               <q-tr :props="props">
                 <q-td key="Acciones" auto-width :props="props">
-                  <q-avatar square  icon="local_atm" :color="props.row.tipo=='VENTA'?'red-1':'green-1'" :text-color="props.row.tipo=='VENTA'?'red':'green'" />
+                  <q-avatar square  icon="local_atm" :color="props.row.tipo!='VENTA'?'red-1':'green-1'" :text-color="props.row.tipo!='VENTA'?'red':'green'" />
                   <q-icon name="o_delete" color="red" size="20px">
                     <q-tooltip>
                       Eliminar
@@ -459,6 +459,7 @@ export default {
       this.sale.productos=[]
       // this.finSale=this.sale
       this.$api.post('sale',this.sale).then(res=>{
+        this.mySales()
         // console.log(res.data)
         // return false
         // this.productosVenta=[]

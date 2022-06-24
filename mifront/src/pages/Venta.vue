@@ -660,6 +660,7 @@ export default {
     },
     misproductos(){
       this.$api.get('producto').then(res=>{
+        console.log(res.data)
         this.productos=[]
         this.$q.loading.hide()
         res.data.forEach(p=>{

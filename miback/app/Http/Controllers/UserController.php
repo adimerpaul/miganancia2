@@ -128,6 +128,7 @@ class UserController extends Controller
         $user->password=Hash::make( $request->password);
         $user->fechalimite=date('Y-m-d', strtotime(now(). ' + 360 days'));;
         $user->minegocio=$request->negocio_id;
+        $user->tipo='empleado';
         $user->save();
     }
 

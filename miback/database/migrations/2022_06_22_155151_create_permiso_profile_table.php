@@ -13,13 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('permiso_user', function (Blueprint $table) {
+        Schema::create('permiso_profile', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger("permiso_id");
             $table->foreign("permiso_id")->references("id")->on("permisos");
-            $table->unsignedBigInteger("user_id");
-            $table->foreign("user_id")->references("id")->on("users");
-            $table->softDeletes();
+            $table->unsignedBigInteger("profile_id");
+            $table->foreign("profile_id")->references("id")->on("profiles");
+            $table->boolean('estado')->default(false);
             $table->timestamps();
         });
     }
@@ -31,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('permiso_user');
+        Schema::dropIfExists('permiso_profile');
     }
 };

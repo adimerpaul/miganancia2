@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Permiso;
-use App\Http\Requests\StorePermisoRequest;
-use App\Http\Requests\UpdatePermisoRequest;
+use App\Models\Profile;
+use App\Http\Requests\StoreProfileRequest;
+use App\Http\Requests\UpdateProfileRequest;
 
-class PermisoController extends Controller
+class ProfileController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,8 +16,6 @@ class PermisoController extends Controller
     public function index()
     {
         //
-        return Permiso::with('permisos')->whereNull('permiso_id')->get();
-
     }
 
     /**
@@ -33,10 +31,10 @@ class PermisoController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StorePermisoRequest  $request
+     * @param  \App\Http\Requests\StoreProfileRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StorePermisoRequest $request)
+    public function store(StoreProfileRequest $request)
     {
         //
     }
@@ -44,10 +42,10 @@ class PermisoController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Permiso  $permiso
+     * @param  \App\Models\Profile  $profile
      * @return \Illuminate\Http\Response
      */
-    public function show(Permiso $permiso)
+    public function show(Profile $profile)
     {
         //
     }
@@ -55,10 +53,10 @@ class PermisoController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Permiso  $permiso
+     * @param  \App\Models\Profile  $profile
      * @return \Illuminate\Http\Response
      */
-    public function edit(Permiso $permiso)
+    public function edit(Profile $profile)
     {
         //
     }
@@ -66,11 +64,11 @@ class PermisoController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\UpdatePermisoRequest  $request
-     * @param  \App\Models\Permiso  $permiso
+     * @param  \App\Http\Requests\UpdateProfileRequest  $request
+     * @param  \App\Models\Profile  $profile
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdatePermisoRequest $request, Permiso $permiso)
+    public function update(UpdateProfileRequest $request, Profile $profile)
     {
         //
     }
@@ -78,10 +76,10 @@ class PermisoController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Permiso  $permiso
+     * @param  \App\Models\Profile  $profile
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Permiso $permiso)
+    public function destroy(Profile $profile)
     {
         //
     }

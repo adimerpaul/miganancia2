@@ -50,6 +50,7 @@
             <q-item-label>Balance</q-item-label>
           </q-item-section>
         </q-item>
+
         <q-item active-class="active" style="font-weight: bold" exact to="inventario" clickable v-if="store.isLoggedIn">
           <q-item-section avatar>
             <!--              <q-icon name="inventory" />-->
@@ -59,6 +60,18 @@
           </q-item-section>
           <q-item-section>
             <q-item-label>Inventario</q-item-label>
+          </q-item-section>
+        </q-item>
+                
+        <q-item active-class="active" style="font-weight: bold" exact to="usuarios" clickable v-if="store.isLoggedIn">
+          <q-item-section avatar>
+            <!--              <q-icon name="inventory" />-->
+            <q-icon name="people" />
+            <!--              <q-icon name="r_inventory" />-->
+            <!--              <q-icon name="s_inventory" />-->
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Personal</q-item-label>
           </q-item-section>
         </q-item>
 <!--        <q-item active-class="active" style="font-weight: bold" exact to="deudas" clickable v-if="store.isLoggedIn">-->

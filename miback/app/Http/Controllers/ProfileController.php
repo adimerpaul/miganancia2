@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Profile;
+use App\Models\Permiso;
 use App\Http\Requests\StoreProfileRequest;
 use App\Http\Requests\UpdateProfileRequest;
+use Illuminate\Support\Facades\DB;
 
 class ProfileController extends Controller
 {
@@ -37,6 +39,20 @@ class ProfileController extends Controller
     public function store(StoreProfileRequest $request)
     {
         //
+        $profile=new Profile;
+        $profile->nombre=strtoupper($request->nombre);
+        $profile->negocio_id=$request->negocio_id;
+        $profile->save();
+
+        $permisos=Permiso::all();
+        foreach ($permisos as $value) {
+           DB::SELECT("INSERT into permiso_profile (permiso_id,profile_id,estado) values ($value->id,$profile->id,0)");
+        }
+
+        foreach ($request->permisos as $r) {
+            DB::SELECT("UPDATE permiso_profile set estado=1 where profile_id=$profile->id and permiso_id=$r");
+        }
+
     }
 
     /**
@@ -71,6 +87,15 @@ class ProfileController extends Controller
     public function update(UpdateProfileRequest $request, Profile $profile)
     {
         //
+        $profile=Profile::find($request->id);
+        $profile->nombre=strtoupper($request->nombre);
+        $profile->save();
+
+        DB::SELECT("UPDATE from permiso_profile set estado=0 where profile_id=$profile_id ");
+
+        foreach ($request->permisos as $r) {
+            DB::SELECT("UPDATE from permiso_profile set estado=1 where profile_id=$profile_id and permiso_id=$r");
+        }
     }
 
     /**

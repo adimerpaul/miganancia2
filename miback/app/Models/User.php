@@ -23,7 +23,8 @@ class User extends Authenticatable
         'password',
         'tipo',
         'fechalimite',
-        'minegocio'
+        'minegocio',
+        'perfil_id'
     ];
 
     /**
@@ -48,7 +49,5 @@ class User extends Authenticatable
         return $this->hasMany(Negocio::class);
     }
 
-    public function permisos(){
-        return $this->belongsToMany(Permiso::class);
-    }
+
 }

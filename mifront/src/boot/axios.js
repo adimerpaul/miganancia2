@@ -25,7 +25,7 @@ export default boot(({ app ,router}) => {
       // console.log(res.data)
       useCounterStore().user=res.data.user
       useCounterStore().negocio=res.data.negocio
-      useCounterStore().permisos=[]
+      useCounterStore().perfil=res.data.perfil
       res.data.permisos.forEach(r=>{
         useCounterStore().permisos.push(r.id)
       })
@@ -36,7 +36,7 @@ export default boot(({ app ,router}) => {
       app.config.globalProperties.$api.defaults.headers.common['Authorization']=''
       useCounterStore().user={}
       useCounterStore().negocio={}
-      useCounterStore().permisos=[]
+      useCounterStore().perfil=[]
       // useCounterStore().negocios=[]
       localStorage.removeItem('tokenmi')
       useCounterStore().isLoggedIn=false

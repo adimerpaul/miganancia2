@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Negocio;
 use App\Models\User;
+use App\Models\Profile;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -45,7 +46,9 @@ class UserController extends Controller
             'password' => 'required',
         ]);
 
-        $user = User::with('permisos')->where('email', $request->email)->first();
+        $user = User::where('email', $request->email)->first();
+        if($user->tipo=="EMPLEADO")
+        $perfil=Profile::with('permisos')->where('perfil_id',$user->perfil_id)->where('negocio',$user->minegocio)->first();
 
         if (! $user || ! Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
@@ -61,6 +64,7 @@ class UserController extends Controller
             'token'=>$token,
             'user'=>$user,
             'negocio'=>$negocio,
+            'perfil'=>$user->tipo=="EMPLEADO"?$perfil:[]
         ],200);
     }
     public function pass(Request $request,User $user){
@@ -83,9 +87,9 @@ class UserController extends Controller
 //            ->with('negocios')
 //            ->firstOrFail();
         $negocio=Negocio::find($request->user()->minegocio);
-        $permisos=User::with('permisos')->where('id',$request->user()->id)->get();
+        $perfil=Profile::with('permisos')->where('perfil_id',$user->perfil_id)->where('negocio',$user->minegocio)->first();
 
-        return response()->json(['user'=>$request->user(),'negocio'=>$negocio,'permisos'=>$permisos[0]->permisos],200);
+        return response()->json(['user'=>$request->user(),'negocio'=>$negocio],200);
 
 //        return User::where('id',1)->with('unid')->get();
     }
@@ -99,6 +103,10 @@ class UserController extends Controller
         //
     }
 
+    public function listpersonal(Request $request){
+        return User::where('tipo','<>','ADMIN')->where('minegocio',$request->minegocio_id)->get();
+        
+    }
     /**
      * Show the form for creating a new resource.
      *
@@ -120,7 +128,6 @@ class UserController extends Controller
         //
         $request->validate([
             'email'=>'required|unique:users|email',
-            'password' => 'required|confirmed|min:6',
         ]);
         $user=new User();
         $user->name= $request->name;
@@ -128,8 +135,14 @@ class UserController extends Controller
         $user->password=Hash::make( $request->password);
         $user->fechalimite=date('Y-m-d', strtotime(now(). ' + 360 days'));;
         $user->minegocio=$request->negocio_id;
-        $user->tipo='empleado';
+        $user->tipo="EMPLEADO";
+        $user->perfil_id=$request->perfil_id;
         $user->save();
+
+        $permisos=Permiso::all();
+        foreach ($permisos as $value) {
+            DB::SELECT("INSERT ");
+        }
     }
 
     /**
@@ -163,11 +176,33 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        $user->update($request->all());
+        $request->validate([
+            'email'=>'required|unique:users|email',
+        ]);
+       // $user->update($request->all());
+        $user=User::find($request->id);
+        $user->name= $request->name;
+        $user->email=$request->email;
+        //$user->password=Hash::make( $request->password);
+        $user->fechalimite=$request->fechalimite;
+        //$user->minegocio=$request->negocio_id;
+        $user->tipo=$request->perfil;
+        $user->save();
 //        return response()->json([
 //            "user"=>$request->user(),
 //            "negocios"=>Negocio::where('user_id',$request->user()->id)->get()
 //        ],200);
+    }
+
+    public function uppassword(Request $request)
+    {
+        $request->validate([
+            'password' => 'required|confirmed|min:6',
+        ]);
+       // $user->update($request->all());
+        $user=User::find($request->id);
+        $user->password=Hash::make( $request->password);
+        $user->save();
     }
 
     /**

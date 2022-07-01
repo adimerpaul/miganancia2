@@ -79,6 +79,7 @@ class UserController extends Controller
         $request->user()->currentAccessToken()->delete();
         return response()->json(['res'=>'salido exitosamente'],200);
     }
+
     public function me(Request $request){
 //        $user=$request->user()->with('unid')->with('permisos')->firstOrFail();
         $user=User::find($request->user()->id);
@@ -87,9 +88,9 @@ class UserController extends Controller
 ////            ->with('permisos')
 //            ->with('negocios')
 //            ->firstOrFail();
-        $negocio=Negocio::find($request->user()->minegocio);
+        $negocio=Negocio::find($user->minegocio);
         if($user->tipo!="ADMIN")
-            $perfil=Profile::with('permisos')->where('perfil_id',$user->perfil_id)->where('negocio',$user->minegocio)->first();
+            $perfil=Profile::with('permisos')->where('id',$user->perfil_id)->where('negocio_id',$user->minegocio)->first();
 
         return response()->json(['user'=>$request->user(),'negocio'=>$negocio,'perfil'=>$user->tipo=="EMPLEADO"?$perfil:[]],200);
 
@@ -106,7 +107,7 @@ class UserController extends Controller
     }
 
     public function listpersonal(Request $request){
-        return User::where('tipo','<>','ADMIN')->where('minegocio',$request->minegocio_id)->get();
+        return User::where('tipo','<>','ADMIN')->where('minegocio',$request->negocio_id)->get();
         
     }
     /**

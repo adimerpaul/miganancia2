@@ -15,11 +15,10 @@
 
 
         <div class="col-12">
-          <q-table dense :columns="colums" :rows="sales" hide-bottom flat bordered :rows-per-page-options="[0]">
-            <template v-slot:body="props">
+          <q-table dense :columns="colums" :rows="usuarios" hide-bottom flat bordered :rows-per-page-options="[0]">
+            <template v-slot:body-cell-Acciones="props">
               <q-tr :props="props">
                 <q-td key="Acciones" auto-width :props="props">
-                  <q-avatar square  icon="local_atm" :color="props.row.tipo!='VENTA'?'red-1':'green-1'" :text-color="props.row.tipo!='VENTA'?'red':'green'" />
                   <q-icon name="o_delete" color="red" size="20px">
                     <q-tooltip>
                       Eliminar
@@ -31,9 +30,7 @@
                     </q-tooltip>
                   </q-icon>
                 </q-td>
-
-
-              </q-tr>
+                              </q-tr>
             </template>
           </q-table>
         </div>
@@ -213,13 +210,13 @@ export default {
       ],
       fechas:{desde:date.formatDate(new Date(),'YYYY-MM-DD'),hasta:date.formatDate(new Date(),'YYYY-MM-DD')},
       buscar:'',
-      sale:{},
-      sales:[],
       perfil:{},
       profile:{},
       profiles:[],
       permisos:[],
       usuario:{fechalimite:date.formatDate(new Date(),'YYYY-MM-DD')},
+      datologin:'',
+      usuarios:[],
       rule:[
         val => (val && val.length > 0) || 'Por favor escriba algo'
       ],
@@ -229,8 +226,14 @@ export default {
       ],
     }
   },
-  created() {
+  mounted(){
+    this.datologin=this.store.negocio.id 
+    console.log(this.datologin)
       this.listperfil();
+      this.listusuarios();
+  },
+  created() {
+
   },
   methods:{
     createUser(){
@@ -264,7 +267,6 @@ export default {
     },
     listperfil(){
       this.profiles=[]
-        console.log(this.store.negocio.tipo)
       this.$api.post('listaperfil',{negocio_id:this.store.user.minegocio}).then(res=>{
         console.log(res.data)
         res.data.forEach(r => {
@@ -272,6 +274,14 @@ export default {
             this.profiles.push(r);
 
         });
+      })
+
+    },
+        listusuarios(){
+      this.usuarios=[]
+      this.$api.post('listpersonal',{negocio_id:this.datologin}).then(res=>{
+        console.log(res.data)
+        this.usuarios=res.data
       })
 
     },

@@ -33,6 +33,7 @@ Route::group(['middleware'=>'auth:sanctum'],function (){
     Route::resource('/sale',\App\Http\Controllers\SaleController::class);
     Route::post('consultsale',[\App\Http\Controllers\SaleController::class,'consultSale']);
     Route::post('listaperfil',[\App\Http\Controllers\ProfileController::class,'listaperfil']);
+    Route::post('listpersonal',[\App\Http\Controllers\UserController::class,'listpersonal']);
     Route::resource('/cliente',\App\Http\Controllers\ClienteController::class);
     Route::resource('/provider',\App\Http\Controllers\ProviderController::class);
     Route::resource('/profile',\App\Http\Controllers\ProfileController::class);

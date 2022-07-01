@@ -7,7 +7,7 @@
           Personal
         </q-toolbar-title>
         <q-btn color="green" @click="clickProfile" :label="$q.screen.lt.md?'':'Nuevo Perfil'" class="q-ml-xs" icon="add_circle_outline" no-caps/>
-        <q-btn color="cyan"  :label="$q.screen.lt.md?'':'Nuevo Usuario'" class="q-ml-xs" icon="add_circle_outline" no-caps/>
+        <q-btn color="cyan" @click="clickUsuario" :label="$q.screen.lt.md?'':'Nuevo Usuario'" class="q-ml-xs" icon="add_circle_outline" no-caps/>
       </q-toolbar>
     </q-header>
     <q-page class="q-pa-xs">
@@ -90,37 +90,96 @@
         </q-card>
       </q-dialog>
 
-      <q-dialog v-model="dialogProvider" position="right" full-height :maximized="true">
+      <q-dialog v-model="dialogUser" position="right" full-height :maximized="true">
         <q-card style="width: 450px; max-width: 80vw;">
           <q-card-section class="row items-center q-pb-none">
-            <div class="text-h6">Nuevo proveedor</div>
+            <div class="text-h6">Nuevo Personal</div>
             <q-space />
             <q-btn icon="cancel" flat round dense v-close-popup />
           </q-card-section>
           <q-card-section class="row items-center no-wrap">
-            <q-form @submit.prevent="createProvider">
+            <q-form @submit.prevent="createUser">
               <div class="row">
                 <div class="col-12">
                   <div class="text-caption text-bold">Los campos marcados con asterisco (<span class="text-red">*</span>) son obligatorios</div>
                 </div>
                 <div class="col-12">
                   <div class="text-caption text-bold">Nombre completo <span class="text-red">*</span></div>
-                  <q-input dense outlined v-model="provider.nombre" label="Nombre proveedor*" hint="Porfavor ingresar nombre proveedor" :rules="rule" required clearable counter>
+                  <q-input dense outlined v-model="usuario.nombre" label="Nombre Completo*" hint="Porfavor ingresar nombre " :rules="rule" required clearable counter>
                     <template v-slot:prepend>
                       <q-icon name="person_outline" />
                     </template>
                   </q-input>
                 </div>
+                <div class="col-12 ">
+                      <q-input dense outlined type="email" v-model="usuario.email" label="Email*" hint="Porfavor ingresar email" :rules="rule" required>
+                        <template v-slot:prepend>
+                          <q-icon name="email" />
+                        </template>
+                      </q-input>
+                    </div>
+                                    <div class="col-12 ">
+                      <q-input dense outlined v-model="usuario.password" label="password*" :type="isPwd ? 'password' : 'text'" hint="Porfavor ingresar contraseña" :rules="rule">
+                        <template v-slot:prepend>
+                          <q-icon name="lock" />
+                        </template>
+                        <template v-slot:append>
+                          <q-icon
+                            :name="isPwd ? 'visibility_off' : 'visibility'"
+                            class="cursor-pointer"
+                            @click="isPwd = !isPwd"
+                          />
+                        </template>
+                      </q-input>
+                    </div>
+                    <div class="col-12 ">
+                      <q-input dense outlined v-model="usuario.password_confirmation" label="Password confirmation*" :type="isPwd ? 'password' : 'text'" hint="Porfavor vuelva a escribir su contraseña" :rules="rule">
+                        <template v-slot:prepend>
+                          <q-icon name="lock" />
+                        </template>
+                        <template v-slot:append>
+                          <q-icon
+                            :name="isPwd ? 'visibility_off' : 'visibility'"
+                            class="cursor-pointer"
+                            @click="isPwd = !isPwd"
+                          />
+                        </template>
+                      </q-input>
+                    </div>
+                    <div class="col-12 ">
+                      <q-select
+                        dense
+                        outlined
+                        hint="Seleccionar una Perfil"
+                        v-model="usuario.perfil"
+                        :options="profiles"
+                        label="Perfil de usuario *"
+                      >
+                        <template v-slot:option="scope">
+                          <q-item v-bind="scope.itemProps">
+                            <q-item-section avatar>
+                              <q-icon :name="scope.opt.icon" />
+                            </q-item-section>
+                            <q-item-section>
+                              <q-item-label>{{ scope.opt.label }}</q-item-label>
+                            </q-item-section>
+                          </q-item>
+                        </template>
+                        <template v-slot:prepend>
+                          <q-icon name="manage_accounts"/>
+                        </template>
+                      </q-select>
+                      </div>
                 <div class="col-12">
-                  <div class="text-caption text-bold">Número de celular <span class="text-grey">(opcional)</span></div>
-                  <q-input dense outlined v-model="provider.celular" type="number" label="Número de celular" hint="Porfavor ingresar numero de celular" clearable counter>
+                  <div class="text-caption">Fecha Limite (<span class="text-red">*</span>) </div>
+                  <q-input dense outlined v-model="usuario.fechalimite" type="date" label="Fecha limite" clearable counter>
                     <template v-slot:prepend>
-                      <q-icon name="phone" />
+                      <q-icon name="event" />
                     </template>
                   </q-input>
                 </div>
                 <div class="col-12 q-py-md">
-                  <q-btn label="Crear proveedor" no-caps color="warning"  class=" text-build text-black full-width" type="submit"/>
+                  <q-btn label="Crear Usuario" no-caps color="warning"  class=" text-build text-black full-width" type="submit"/>
                 </div>
               </div>
             </q-form>
@@ -140,6 +199,7 @@ export default {
   name: `Home`,
   data(){
     return{
+      isPwd:true,
       dialogProfile:false,
       lpermisos:[],
       dialogUser:false,
@@ -155,8 +215,11 @@ export default {
       buscar:'',
       sale:{},
       sales:[],
+      perfil:{},
       profile:{},
+      profiles:[],
       permisos:[],
+      usuario:{fechalimite:date.formatDate(new Date(),'YYYY-MM-DD')},
       rule:[
         val => (val && val.length > 0) || 'Por favor escriba algo'
       ],
@@ -167,9 +230,51 @@ export default {
     }
   },
   created() {
-    
+      this.listperfil();
   },
   methods:{
+    createUser(){
+      this.usuario.negocio_id=this.store.negocio.id
+      if(this.usuario.perfil==undefined || this.usuario.perfil=='')
+      {
+                this.$q.notify({
+          message: 'Seleccione Perfil',
+          color: 'red',
+          icon: 'error'
+        })
+        return false
+      }
+      console.log(this.usuario)
+    //  return false
+      this.$api.post('user',this.usuario).then(res=>{
+        console.log(res.data)
+        this.dialogUser=false
+        this.usuario={}
+        this.usuario.perfil=''
+      }).catch(err => {
+        this.$q.loading.hide()
+        // console.log(err.response.data.errors)
+        this.$q.notify({
+          message: err.response.data.message,
+          color: 'red',
+          icon: 'error'
+        })
+      })
+
+    },
+    listperfil(){
+      this.profiles=[]
+        console.log(this.store.negocio.tipo)
+      this.$api.post('listaperfil',{negocio_id:this.store.user.minegocio}).then(res=>{
+        console.log(res.data)
+        res.data.forEach(r => {
+            r.label=r.nombre
+            this.profiles.push(r);
+
+        });
+      })
+
+    },
     listapermisos(){
       this.$api.get('permiso').then(res=>{
         console.log(res.data)
@@ -190,6 +295,7 @@ export default {
             console.log('reg pro')
             this.profile={}
             this.dialogProfile=false
+            this.listperfil();
       })
 
     },
@@ -201,9 +307,18 @@ export default {
     clickProfile(){
       this.dialogProfile=true
       this.permisos=[]
+      this.usuario.perfil=''
       this.listapermisos()
 
       this.profile={}
+    },
+
+        clickUsuario(){
+          var d = new Date();
+          d.setDate(d.getDate() + 90);
+
+      this.dialogUser=true
+      this.usuario={fechalimite:date.formatDate(d,'YYYY-MM-DD')}
     },
 
 

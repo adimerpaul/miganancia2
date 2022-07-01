@@ -37,7 +37,8 @@ class UserController extends Controller
         return response()->json([
             'token'=>$token,
             'user'=>$user,
-            'negocio'=>$negocio
+            'negocio'=>$negocio,
+            'perfil'=>[]
         ],200);
     }
     public function login(Request $request){
@@ -80,16 +81,17 @@ class UserController extends Controller
     }
     public function me(Request $request){
 //        $user=$request->user()->with('unid')->with('permisos')->firstOrFail();
-//        $user=$request->user()
+        $user=User::find($request->user()->id);
 //        $user=User::where('id',$request->user()->id)
 ////            ->with('unid')
 ////            ->with('permisos')
 //            ->with('negocios')
 //            ->firstOrFail();
         $negocio=Negocio::find($request->user()->minegocio);
-        $perfil=Profile::with('permisos')->where('perfil_id',$user->perfil_id)->where('negocio',$user->minegocio)->first();
+        if($user->tipo!="ADMIN")
+            $perfil=Profile::with('permisos')->where('perfil_id',$user->perfil_id)->where('negocio',$user->minegocio)->first();
 
-        return response()->json(['user'=>$request->user(),'negocio'=>$negocio],200);
+        return response()->json(['user'=>$request->user(),'negocio'=>$negocio,'perfil'=>$user->tipo=="EMPLEADO"?$perfil:[]],200);
 
 //        return User::where('id',1)->with('unid')->get();
     }
@@ -128,21 +130,18 @@ class UserController extends Controller
         //
         $request->validate([
             'email'=>'required|unique:users|email',
+            'password' => 'required|confirmed|min:6',
         ]);
         $user=new User();
-        $user->name= $request->name;
+        $user->name= $request->nombre;
         $user->email=$request->email;
         $user->password=Hash::make( $request->password);
-        $user->fechalimite=date('Y-m-d', strtotime(now(). ' + 360 days'));;
+        $user->fechalimite=$request->fechalimite;
         $user->minegocio=$request->negocio_id;
         $user->tipo="EMPLEADO";
-        $user->perfil_id=$request->perfil_id;
+        $user->perfil_id=$request->perfil["id"];
         $user->save();
 
-        $permisos=Permiso::all();
-        foreach ($permisos as $value) {
-            DB::SELECT("INSERT ");
-        }
     }
 
     /**

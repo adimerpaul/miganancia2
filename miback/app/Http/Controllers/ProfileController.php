@@ -7,6 +7,7 @@ use App\Models\Permiso;
 use App\Http\Requests\StoreProfileRequest;
 use App\Http\Requests\UpdateProfileRequest;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 
 class ProfileController extends Controller
 {
@@ -18,6 +19,7 @@ class ProfileController extends Controller
     public function index()
     {
         //
+
     }
 
     /**
@@ -30,6 +32,9 @@ class ProfileController extends Controller
         //
     }
 
+    public function listaperfil(Request $request){
+        return Profile::where('negocio_id',$request->negocio_id)->get();
+    }
     /**
      * Store a newly created resource in storage.
      *

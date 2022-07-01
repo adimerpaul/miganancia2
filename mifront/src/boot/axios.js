@@ -22,13 +22,10 @@ export default boot(({ app ,router}) => {
   if (token) {
     app.config.globalProperties.$api.defaults.headers.common['Authorization'] = 'Bearer '+token
     app.config.globalProperties.$api.post('me').then(res=>{
-      // console.log(res.data)
+       console.log(res.data)
       useCounterStore().user=res.data.user
       useCounterStore().negocio=res.data.negocio
       useCounterStore().perfil=res.data.perfil
-      res.data.permisos.forEach(r=>{
-        useCounterStore().permisos.push(r.id)
-      })
       useCounterStore().isLoggedIn=true
       // let ne = useCounterStore().negocios.find(n=>n.id===res.data.minegocio)
       // useCounterStore().negocio= ne

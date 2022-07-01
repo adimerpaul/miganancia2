@@ -49,7 +49,7 @@ class UserController extends Controller
 
         $user = User::where('email', $request->email)->first();
         if($user->tipo=="EMPLEADO")
-        $perfil=Profile::with('permisos')->where('perfil_id',$user->perfil_id)->where('negocio',$user->minegocio)->first();
+        $perfil=Profile::with('permisos')->where('id',$user->perfil_id)->where('negocio_id',$user->minegocio)->first();
 
         if (! $user || ! Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([

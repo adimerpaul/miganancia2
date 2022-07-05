@@ -4,6 +4,7 @@ import Inventario from "pages/Inventario";
 import Deudas from "pages/Deudas";
 import Venta from "pages/Venta";
 import Usuarios from "pages/Usuarios";
+import RealizarPedido from "pages/RealizarPedido";
 
 const routes = [
   {
@@ -16,8 +17,10 @@ const routes = [
       { path: 'deudas', component: Deudas,meta: {requiresAuth: true}},
       { path: 'venta', component: Venta,meta: {requiresAuth: true}},
       { path: 'usuarios', component: Usuarios,meta: {requiresAuth: true}},
+      { path: 'realizarpedido', component: RealizarPedido,meta: {requiresAuth: true}},
     ]
   },
+
 
   // Always leave this as last one,
   // but you can also remove it

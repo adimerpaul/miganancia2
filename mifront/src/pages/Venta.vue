@@ -58,8 +58,8 @@
                     {{p.nombre}}
                   </q-tooltip>
                   <q-img :src="url+'../imagenes/'+p.foto" width="100%" height="100px">
-                    <q-btn v-if="p.cantidadPedida==0" style="top: 0px; right: 0px;background: rgba(255,255,255,0.5);border: 1px solid black" size="10px" class="absolute all-pointer-events" icon="add_circle_outline" dense/>
-                    <q-btn v-else :label="p.cantidadPedida" style="top: 0px; right: 0px;background: rgba(255,255,0,0.5);border: 1px solid black" size="10px" class="absolute all-pointer-events" icon="o_shopping_basket" dense/>
+                    <q-btn v-if="p.cantidadPedida==0" style="top: 0px; right: 0px;background: rgba(255,255,255,0.5);border: 1px solid black;cursor: pointer" size="10px" class="absolute all-pointer-events" icon="add_circle_outline" dense/>
+                    <q-btn v-else :label="p.cantidadPedida" style="top: 0px; right: 0px;background: rgba(255,255,0,0.5);border: 1px solid black;cursor: pointer" size="10px" class="absolute all-pointer-events" icon="o_shopping_basket" dense/>
                     <div class="absolute-bottom text-center text-subtitle2 noSelect  q-pa-none q-ma-none">
                       {{p.nombre}}
                     </div>
@@ -125,10 +125,10 @@
                       <q-td key="cantidadVenta" :props="props">
                         <q-input dense outlined bottom-slots min="1" v-model="props.row.cantidadVenta" @update:model-value="cambioNumero(props.row,props.pageIndex)" :rules="ruleNumber" type="number" input-class="text-center" required placeholder="Escribe el nombre del producto">
                           <template v-slot:prepend>
-                            <q-icon name="remove_circle_outline" @click="removeCantidad(props.row,props.pageIndex)"/>
+                            <q-icon style="cursor: pointer" name="remove_circle_outline" @click="removeCantidad(props.row,props.pageIndex)"/>
                           </template>
                           <template v-slot:append>
-                            <q-icon name="add_circle_outline" @click="addCantidad(props.row,props.pageIndex)"/>
+                            <q-icon style="cursor: pointer" name="add_circle_outline" @click="addCantidad(props.row,props.pageIndex)"/>
                           </template>
                         </q-input>
                         <div class="text-grey">= Bs {{props.row.cantidadVenta*props.row.precioVenta}}</div>
@@ -173,7 +173,7 @@
                   </q-card>
                 </q-expansion-item>
               </q-list>
-                <q-btn @click="clickSale" class="full-width" no-caps label="Confirmar venta" :color="productosVenta.length==0?'grey':'warning'" :disable="productosVenta.length==0?true:false"/>
+              <q-btn @click="clickSale" class="full-width" no-caps label="Confirmar venta" :color="productosVenta.length==0?'grey':'warning'" :disable="productosVenta.length==0?true:false"/>
             </q-card-section>
           </q-card>
         </div>
@@ -320,6 +320,69 @@
                   </template>
                 </q-input>
               </div>
+              <div class="col-12">
+<!--                <q-list padding bordered dense class="rounded-borders full-width q-pa-none q-ma-none">-->
+                  <q-expansion-item
+                    dense
+                    dense-toggle
+                    expand-separator
+                    label="Total"
+                    @click="showMap=!showMap"
+                  >
+                    <template v-slot:header>
+                      <q-item-section>
+                      </q-item-section>
+                      <q-item-section side>
+                        <div class="text-right text-grey-8 text-bold">Agregar información adicional</div>
+                      </q-item-section>
+                    </template>
+                    <q-card>
+                      <q-card-section>
+                        <div class="row">
+                          <div class="col-12">
+                            <div class="text-caption text-bold">Tipo de documento</div>
+                            <q-select dense outlined :options="['','CI','NIT']" v-model="cliente.tipodocumento" label="Tipo de documento" hint="Porfavor ingresar tipo documento" clearable counter>
+                              <template v-slot:prepend>
+                                <q-icon name="format_list_numbered" />
+                              </template>
+                            </q-select>
+                          </div>
+                          <div class="col-12">
+                            <div class="text-caption text-bold">Número de documento</div>
+                            <q-input dense outlined v-model="cliente.cinit" label="Número de documento" hint="Porfavor ingresar Número de documento" clearable counter>
+                              <template v-slot:prepend>
+                                <q-icon name="credit_card" />
+                              </template>
+                            </q-input>
+                          </div>
+                          <div class="col-12">
+                            <div class="text-caption text-bold">Comentario</div>
+                            <q-input dense outlined v-model="cliente.comentario" label="Comentario" hint="Porfavor ingresar comentario" clearable counter>
+                              <template v-slot:prepend>
+                                <q-icon name="chat" />
+                              </template>
+                            </q-input>
+                          </div>
+                          <div class="col-12">
+                            <div class="text-caption text-bold">Ubicacion del negocio</div>
+                            <template v-if="showMap">
+                              Lat: {{marker[0]}} Lng: {{marker[1]}}
+                              <l-map style="height: 250px; width: 100%;" @ready="onReady" @click="addMarker" @locationfound="onLocationFound" :options="{ attributionControl:true}" v-model="zoom" :zoom="zoom" :center="center" :maxZoom="17">
+                                <l-tile-layer :url="urlMap"/>
+                                <l-control>
+                                  <q-btn type="button" :class="urlMap=='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'?'text-bold':''" @click="urlMap='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'" label="Mapa" style="background: white" size="10px"/>
+                                  <q-btn type="button" :class="urlMap!='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'?'text-bold':''" @click="urlMap='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'" label="Satelite" style="background: white" size="10px"/>
+                                </l-control>
+                                <l-marker :lat-lng="marker" :draggable="true" @drag="updateMarker" />
+                              </l-map>
+                            </template>
+                          </div>
+                        </div>
+                      </q-card-section>
+                    </q-card>
+                  </q-expansion-item>
+<!--                </q-list>-->
+              </div>
               <div class="col-12 q-py-md">
                 <q-btn label="Crear cliente" no-caps color="warning"  class=" text-build text-black full-width" type="submit"/>
               </div>
@@ -375,6 +438,8 @@
   </div>
 </template>
 <script>
+import  "leaflet/dist/leaflet.css"
+import { LMap, LTileLayer, LMarker, LControl } from "@vue-leaflet/vue-leaflet";
 import {useCounterStore} from "stores/example-store";
 import {date} from "quasar";
 import { jsPDF } from "jspdf";
@@ -382,14 +447,25 @@ import $ from 'jquery'
 import moment from 'moment'
 moment.locale('es')
 export default {
+  components: {
+    LMap,
+    LTileLayer,
+    LMarker,
+    LControl
+  },
   name: `Venta`,
   data(){
     return {
+      showMap: false,
       dialogCreasteVenta:false,
       dialogCliente:false,
       dialogSale:false,
       url: process.env.API,
+      urlMap:'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+      zoom: 14,
+      center:[-17.970371, -67.112303],
       store:useCounterStore(),
+      marker: [0, 0],
       sale:{},
       concepto:'',
       clientesOption:[],
@@ -439,6 +515,22 @@ export default {
 
   },
   methods:{
+    updateMarker(e){
+      if (e.latlng!=undefined){
+        this.marker=[e.latlng.lat.toFixed(7),e.latlng.lng.toFixed(7)]
+      }
+    },
+    addMarker(e){
+      if (e.latlng!=undefined){
+        this.marker=[e.latlng.lat.toFixed(7),e.latlng.lng.toFixed(7)]
+      }
+    },
+    onReady (mapObject) {
+      mapObject.locate();
+    },
+    onLocationFound(location){
+      this.center=[location.latlng.lat,location.latlng.lng]
+    },
     comprobante(){
       var doc = new jsPDF()
       var img = new Image()
@@ -500,9 +592,13 @@ export default {
       this.$api.put('sale/'+this.finSale.id,{concepto:this.concepto})
     },
     createCliente(){
+      this.$q.loading.show()
       this.cliente.negocio_id=this.store.negocio.id
+      this.cliente.lat=this.marker[0]
+      this.cliente.lng=this.marker[1]
       this.$api.post('cliente',this.cliente).then(res=>{
         this.dialogCliente=false
+        this.$q.loading.hide()
         this.cliente={}
         this.misclientes()
         this.$q.notify({
@@ -660,7 +756,7 @@ export default {
     },
     misproductos(){
       this.$api.get('producto').then(res=>{
-        console.log(res.data)
+        // console.log(res.data)
         this.productos=[]
         this.$q.loading.hide()
         res.data.forEach(p=>{

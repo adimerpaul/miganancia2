@@ -13,5 +13,10 @@ class Cliente extends Model
         "nombre",
         "celular",
         "negocio_id",
+        "tipodocumento",
+        "cinit",
+        "comentario",
+        "lat",
+        "lng",
     ];
 }

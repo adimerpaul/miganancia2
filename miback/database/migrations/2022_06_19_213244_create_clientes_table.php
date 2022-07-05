@@ -17,6 +17,11 @@ return new class extends Migration
             $table->id();
             $table->string("nombre");
             $table->string("celular")->nullable();
+            $table->string("tipodocumento")->nullable();
+            $table->string("cinit")->nullable();
+            $table->string("comentario")->nullable();
+            $table->double("lat",11,7)->nullable()->default(0);
+            $table->double("lng",11,7)->nullable()->default(0);
             $table->unsignedBigInteger("negocio_id");
             $table->foreign("negocio_id")->references("id")->on("negocios");
             $table->softDeletes();

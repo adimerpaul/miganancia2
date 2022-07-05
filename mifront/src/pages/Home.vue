@@ -100,7 +100,7 @@
           </q-card>
         </div>
         <div class="col-12">
-          <q-table dense :columns="colums" :rows="sales" hide-bottom flat bordered :rows-per-page-options="[0]">
+          <q-table v-if="this.sales.length!=0" dense :columns="colums" :rows="sales" hide-bottom flat bordered :rows-per-page-options="[0]">
             <template v-slot:body="props">
               <q-tr :props="props">
                 <q-td key="Acciones" auto-width :props="props">
@@ -147,6 +147,17 @@
               </q-tr>
             </template>
           </q-table>
+          <div v-else class="full-width full-height flex flex-center">
+            <div class="row">
+              <div class="col-12 text-center">
+                <q-icon name="menu_book" size="150px" color="grey"/>
+              </div>
+              <div class="col-12 text-center text-grey text-bold q-pa-lg" style="font-size: 20px">
+                <div>Aún no tienes registros creados en esta fecha. Empieza agregando uno con las acciones de <span class="text-black">“Nueva venta”</span> o <span class="text-black">“Nuevo gasto”</span></div>
+              </div>
+            </div>
+
+          </div>
         </div>
       </div>
       <q-dialog v-model="dialogSale" position="right" full-height :maximized="true">

@@ -50,30 +50,73 @@
             <q-item-label>Balance</q-item-label>
           </q-item-section>
         </q-item>
-
         <q-item active-class="active" style="font-weight: bold" exact to="inventario" clickable v-if="store.isLoggedIn">
           <q-item-section avatar>
-            <!--              <q-icon name="inventory" />-->
             <q-icon name="o_inventory" />
-            <!--              <q-icon name="r_inventory" />-->
-            <!--              <q-icon name="s_inventory" />-->
           </q-item-section>
           <q-item-section>
             <q-item-label>Inventario</q-item-label>
           </q-item-section>
         </q-item>
-                
         <q-item active-class="active" style="font-weight: bold" exact to="usuarios" clickable v-if="store.isLoggedIn">
           <q-item-section avatar>
-            <!--              <q-icon name="inventory" />-->
-            <q-icon name="people" />
-            <!--              <q-icon name="r_inventory" />-->
-            <!--              <q-icon name="s_inventory" />-->
+            <q-icon name="o_people" />
           </q-item-section>
           <q-item-section>
             <q-item-label>Personal</q-item-label>
           </q-item-section>
         </q-item>
+        <q-item active-class="active" @click="clickDialogCLientes" style="font-weight: bold" exact clickable v-if="store.isLoggedIn">
+          <q-item-section avatar>
+            <q-icon name="o_store" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Clientes</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item active-class="active" style="font-weight: bold" exact clickable v-if="store.isLoggedIn">
+          <q-item-section avatar>
+            <q-icon name="emoji_transportation" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Proveedores</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-expansion-item
+          active-class="active"
+          expand-separator
+          icon="o_airport_shuttle"
+          label="Modulo pedidos"
+          class="text-bold"
+        >
+          <q-card>
+            <q-card-section>
+              <q-item clickable to="/realizarpedido" exact active-class="active">
+                <q-item-section avatar>
+                  <q-icon name="travel_explore" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>Realizar Pedido</q-item-label>
+<!--                  <q-item-label caption>-->
+<!--                    Denuncias realizadas-->
+<!--                  </q-item-label>-->
+                </q-item-section>
+              </q-item>
+              <q-item clickable to="/pedidosrealizados" exact>
+                <q-item-section avatar>
+                  <q-icon name="history_edu" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>Pedidos realizados</q-item-label>
+<!--                  <q-item-label caption>-->
+<!--                    Reporte denuncias-->
+<!--                  </q-item-label>-->
+                </q-item-section>
+              </q-item>
+            </q-card-section>
+
+          </q-card>
+        </q-expansion-item>
 <!--        <q-item active-class="active" style="font-weight: bold" exact to="deudas" clickable v-if="store.isLoggedIn">-->
 <!--          <q-item-section avatar>-->
 <!--            <q-icon name="pending_actions" />-->
@@ -322,20 +365,167 @@
         </q-card-section>
       </q-card>
     </q-dialog>
+    <q-dialog v-model="dialogClientes" position="right" full-height :maximized="true">
+      <q-card style="width: 450px; max-width: 80vw;">
+        <q-card-section class="row items-center q-pb-none">
+          <div class="text-h6">Clientes</div>
+          <q-space />
+          <q-btn icon="cancel" flat round dense v-close-popup />
+        </q-card-section>
+        <q-card-section class="full-width">
+            <div class="row full-width">
+              <div class="col-12">
+                <q-table :rows="clientes" :filter="filterCliente" :columns="columnsClientes" hide-header hide-bottom :rows-per-page-options="[0]">
+                  <template v-slot:top>
+                    <q-input class="full-width" placeholder="Buscar cliente.." dense outlined v-model="filterCliente" >
+                      <template v-slot:prepend>
+                        <q-icon name="search"/>
+                      </template>
+                    </q-input>
+                  </template>
+                  <template v-slot:body-cell-icono="props">
+                    <q-td :props="props" auto-width>
+                      <q-avatar size="24px" color="grey" style="color: white">{{props.row.nombre.substring(0,1).toUpperCase()}}</q-avatar>
+                    </q-td>
+                  </template>
+                </q-table>
+              </div>
+              <div class="col-12 q-py-md">
+                <q-btn @click="clickCreateCliente" label="Crear cliente" no-caps color="warning"  class=" text-build text-black full-width" type="submit"/>
+              </div>
+            </div>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="dialogCliente" position="right" full-height :maximized="true">
+      <q-card style="width: 450px; max-width: 80vw;">
+        <q-card-section class="row items-center q-pb-none">
+          <div class="text-h6">Nuevo cliente</div>
+          <q-space />
+          <q-btn icon="cancel" flat round dense v-close-popup />
+        </q-card-section>
+        <q-card-section class="row items-center no-wrap">
+          <q-form @submit.prevent="createCliente">
+            <div class="row">
+              <div class="col-12">
+                <div class="text-caption text-bold">Los campos marcados con asterisco (<span class="text-red">*</span>) son obligatorios</div>
+              </div>
+              <div class="col-12">
+                <div class="text-caption text-bold">Nombre completo <span class="text-red">*</span></div>
+                <q-input dense outlined v-model="cliente.nombre" label="Nombre cliente*" hint="Porfavor ingresar nombre cliente" :rules="rule" required clearable counter>
+                  <template v-slot:prepend>
+                    <q-icon name="person_outline" />
+                  </template>
+                </q-input>
+              </div>
+              <div class="col-12">
+                <div class="text-caption text-bold">Número de celular <span class="text-grey">(opcional)</span></div>
+                <q-input dense outlined v-model="cliente.celular" type="number" label="Número de celular" hint="Porfavor ingresar numero de celular" clearable counter>
+                  <template v-slot:prepend>
+                    <q-icon name="phone" />
+                  </template>
+                </q-input>
+              </div>
+              <div class="col-12">
+                <!--                <q-list padding bordered dense class="rounded-borders full-width q-pa-none q-ma-none">-->
+                <q-expansion-item
+                  dense
+                  dense-toggle
+                  expand-separator
+                  label="Total"
+                  @click="showMap=!showMap"
+                >
+                  <template v-slot:header>
+                    <q-item-section>
+                    </q-item-section>
+                    <q-item-section side>
+                      <div class="text-right text-grey-8 text-bold">Agregar información adicional</div>
+                    </q-item-section>
+                  </template>
+                  <q-card>
+                    <q-card-section>
+                      <div class="row">
+                        <div class="col-12">
+                          <div class="text-caption text-bold">Tipo de documento</div>
+                          <q-select dense outlined :options="['','CI','NIT']" v-model="cliente.tipodocumento" label="Tipo de documento" hint="Porfavor ingresar tipo documento" clearable counter>
+                            <template v-slot:prepend>
+                              <q-icon name="format_list_numbered" />
+                            </template>
+                          </q-select>
+                        </div>
+                        <div class="col-12">
+                          <div class="text-caption text-bold">Número de documento</div>
+                          <q-input dense outlined v-model="cliente.cinit" label="Número de documento" hint="Porfavor ingresar Número de documento" clearable counter>
+                            <template v-slot:prepend>
+                              <q-icon name="credit_card" />
+                            </template>
+                          </q-input>
+                        </div>
+                        <div class="col-12">
+                          <div class="text-caption text-bold">Comentario</div>
+                          <q-input dense outlined v-model="cliente.comentario" label="Comentario" hint="Porfavor ingresar comentario" clearable counter>
+                            <template v-slot:prepend>
+                              <q-icon name="chat" />
+                            </template>
+                          </q-input>
+                        </div>
+                        <div class="col-12">
+                          <div class="text-caption text-bold">Ubicacion del negocio</div>
+                          <template v-if="showMap">
+                            Lat: {{marker[0]}} Lng: {{marker[1]}}
+                            <l-map style="height: 250px; width: 100%;" @ready="onReady" @click="addMarker" @locationfound="onLocationFound" :options="{ attributionControl:true}" v-model="zoom" :zoom="zoom" :center="center" :maxZoom="17">
+                              <l-tile-layer :url="urlMap"/>
+                              <l-control>
+                                <q-btn type="button" :class="urlMap=='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'?'text-bold':''" @click="urlMap='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'" label="Mapa" style="background: white" size="10px"/>
+                                <q-btn type="button" :class="urlMap!='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'?'text-bold':''" @click="urlMap='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'" label="Satelite" style="background: white" size="10px"/>
+                              </l-control>
+                              <l-marker :lat-lng="marker" :draggable="true" @drag="updateMarker" />
+                            </l-map>
+                          </template>
+                        </div>
+                      </div>
+                    </q-card-section>
+                  </q-card>
+                </q-expansion-item>
+                <!--                </q-list>-->
+              </div>
+              <div class="col-12 q-py-md">
+                <q-btn label="Crear cliente" no-caps color="warning"  class=" text-build text-black full-width" type="submit"/>
+              </div>
+            </div>
+          </q-form>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </q-layout>
 </template>
 
 <script>
 // import EssentialLink from 'components/EssentialLink.vue'
 import {useCounterStore} from "stores/example-store";
+import { LMap, LTileLayer, LMarker, LControl } from "@vue-leaflet/vue-leaflet";
 export default {
   name: 'MainLayout',
+  components: {
+    LMap,
+    LTileLayer,
+    LMarker,
+    LControl
+  },
   data(){
     return{
+      showMap:false,
+      marker: [0, 0],
+      urlMap:'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+      zoom: 14,
+      center:[-17.970371, -67.112303],
+      dialogCliente:false,
       store:useCounterStore(),
       url:process.env.API,
       negocios:[],
+      filterCliente:'',
       dialogcambioempresa:false,
+      dialogClientes:false,
       dialognegocio:false,
       dialogcreatenegocio:false,
       options: [
@@ -367,9 +557,66 @@ export default {
         val => (val !== null && val !== '') || 'Por favor escriba su cantidad',
         val => (val >= 0 && val < 10000) || 'Por favor escriba una cantidad real'
       ],
+      clientes:[],
+      cliente:{},
+      columnsClientes:[
+        {name:'icono',field:'icono',label:'icono'},
+        {name:'nombre',field:'nombre',label:'nombre',align:'left'},
+        {name:'opcion',field:'opcion',label:'opcion'},
+      ]
     }
   },
   methods:{
+    updateMarker(e){
+      if (e.latlng!=undefined){
+        this.marker=[e.latlng.lat.toFixed(7),e.latlng.lng.toFixed(7)]
+      }
+    },
+    addMarker(e){
+      if (e.latlng!=undefined){
+        this.marker=[e.latlng.lat.toFixed(7),e.latlng.lng.toFixed(7)]
+      }
+    },
+    onReady (mapObject) {
+      mapObject.locate();
+    },
+    onLocationFound(location){
+      this.center=[location.latlng.lat,location.latlng.lng]
+    },
+    createCliente(){
+      this.$q.loading.show()
+      this.cliente.negocio_id=this.store.negocio.id
+      this.cliente.lat=this.marker[0]
+      this.cliente.lng=this.marker[1]
+      this.$api.post('cliente',this.cliente).then(res=>{
+        this.dialogCliente=false
+        this.$q.loading.hide()
+        this.cliente={}
+
+        this.misclientes()
+        this.$q.notify({
+          message:'Cliente creado correctamente',
+          color:'green',
+          icon:'check'
+        })
+      })
+    },
+    clickCreateCliente(c){
+      this.showMap=false
+      this.cliente={}
+      this.dialogCliente=true
+    },
+    misclientes(){
+      this.$api.get('cliente').then(res=>{
+        this.clientes=res.data
+        this.$q.loading.hide()
+        this.dialogClientes=true
+      })
+    },
+    clickDialogCLientes(){
+      this.$q.loading.show()
+      this.misclientes()
+    },
     cambionegocio(n){
       this.store.negocio=n
       this.dialogcambioempresa=false

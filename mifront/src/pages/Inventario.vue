@@ -747,7 +747,7 @@
 </template>
 
 <script>
-import {useCounterStore} from "stores/example-store"
+import {globalStore} from "stores/example-store"
 export default {
   name: `Inventario`,
   data(){
@@ -769,7 +769,7 @@ export default {
         value: '',
         id: 0
       },
-      store:useCounterStore(),
+      store:globalStore(),
       filterProducto:'',
       filterproductocategoria:'',
       ordenar:{label: 'Productos más vendidos',value: 'Productos más vendidos',icon:'list'},

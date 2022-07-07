@@ -35,7 +35,7 @@
 <script>
 import  "leaflet/dist/leaflet.css"
 import { LMap, LTileLayer, LMarker, LControl } from "@vue-leaflet/vue-leaflet";
-import {useCounterStore} from "stores/example-store";
+import {globalStore} from "stores/example-store";
 export default {
   components: {
     LMap,
@@ -48,7 +48,7 @@ export default {
       urlMap:'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       zoom: 14,
       center:[-17.970371, -67.112303],
-      store:useCounterStore(),
+      store:globalStore(),
       marker: [0, 0],
     };
   },

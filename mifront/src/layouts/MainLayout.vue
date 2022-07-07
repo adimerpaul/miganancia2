@@ -502,7 +502,7 @@
 
 <script>
 // import EssentialLink from 'components/EssentialLink.vue'
-import {useCounterStore} from "stores/example-store";
+import {globalStore} from "stores/example-store";
 import { LMap, LTileLayer, LMarker, LControl } from "@vue-leaflet/vue-leaflet";
 export default {
   name: 'MainLayout',
@@ -520,7 +520,7 @@ export default {
       zoom: 14,
       center:[-17.970371, -67.112303],
       dialogCliente:false,
-      store:useCounterStore(),
+      store:globalStore(),
       url:process.env.API,
       negocios:[],
       filterCliente:'',

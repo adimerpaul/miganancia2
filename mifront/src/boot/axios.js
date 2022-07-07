@@ -1,6 +1,6 @@
 import { boot } from 'quasar/wrappers'
 import axios from 'axios'
-import {useCounterStore} from 'stores/example-store'
+import {globalStore} from 'stores/example-store'
 // Be careful when using SSR for cross-request state pollution
 // due to creating a Singleton instance here;
 // If any client changes this (global) instance, it might be a
@@ -23,20 +23,20 @@ export default boot(({ app ,router}) => {
     app.config.globalProperties.$api.defaults.headers.common['Authorization'] = 'Bearer '+token
     app.config.globalProperties.$api.post('me').then(res=>{
        // console.log(res.data)
-      useCounterStore().user=res.data.user
-      useCounterStore().negocio=res.data.negocio
-      useCounterStore().perfil=res.data.perfil
-      useCounterStore().isLoggedIn=true
-      // let ne = useCounterStore().negocios.find(n=>n.id===res.data.minegocio)
-      // useCounterStore().negocio= ne
+      globalStore().user=res.data.user
+      globalStore().negocio=res.data.negocio
+      globalStore().perfil=res.data.perfil
+      globalStore().isLoggedIn=true
+      // let ne = globalStore().negocios.find(n=>n.id===res.data.minegocio)
+      // globalStore().negocio= ne
     }).catch(err=>{
       app.config.globalProperties.$api.defaults.headers.common['Authorization']=''
-      useCounterStore().user={}
-      useCounterStore().negocio={}
-      useCounterStore().perfil=[]
-      // useCounterStore().negocios=[]
+      globalStore().user={}
+      globalStore().negocio={}
+      globalStore().perfil=[]
+      // globalStore().negocios=[]
       localStorage.removeItem('tokenmi')
-      useCounterStore().isLoggedIn=false
+      globalStore().isLoggedIn=false
       router.push('/')
     })
   }

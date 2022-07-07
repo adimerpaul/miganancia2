@@ -70,7 +70,7 @@
                                 <ul v-for="listsub in sub.permisos" :key="listsub" style="list-style: none;">
                                     <li><q-checkbox dense v-model="lpermisos" :val="listsub.id" />  {{listsub.nombre}}</li>
                                 </ul>
-                                
+
 
                             </ul>
                         </ul>
@@ -188,7 +188,7 @@
 </template>
 
 <script>
-import {useCounterStore} from "stores/example-store"
+import {globalStore} from "stores/example-store"
 import {date} from "quasar";
 import moment from 'moment'
 moment.locale('es')
@@ -201,7 +201,7 @@ export default {
       lpermisos:[],
       dialogUser:false,
       dialogProvider:false,
-      store: useCounterStore(),
+      store: globalStore(),
       colums:[
         {name:'Acciones',label:'Acciones',field:'Acciones',align:'center'},
         {name:'name',label:'Personal',field:'name',align:'left'},
@@ -227,7 +227,7 @@ export default {
     }
   },
   mounted(){
-    this.datologin=this.store.negocio.id 
+    this.datologin=this.store.negocio.id
     console.log(this.datologin)
       this.listperfil();
       this.listusuarios();
@@ -335,7 +335,7 @@ export default {
 
   },
   computed:{
- 
+
   }
 }
 </script>

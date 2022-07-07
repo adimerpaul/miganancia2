@@ -1,7 +1,7 @@
 import { route } from 'quasar/wrappers'
 import { createRouter, createMemoryHistory, createWebHistory, createWebHashHistory } from 'vue-router'
 import routes from './routes'
-import {useCounterStore} from 'stores/example-store'
+import {globalStore} from 'stores/example-store'
 /*
  * If not building with SSR mode, you can
  * directly export the Router instantiation;
@@ -29,7 +29,7 @@ export default route(function (/* { store, ssrContext } */) {
     // console.log(store().getters['showcase/isLoggedIn'])
     if(to.matched.some(record => record.meta.requiresAuth)) {
       // if (store().getters['login/isLoggedIn']) {
-      if (useCounterStore().isLoggedIn) {
+      if (globalStore().isLoggedIn) {
         next()
         return
       }

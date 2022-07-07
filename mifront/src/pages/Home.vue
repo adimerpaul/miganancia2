@@ -333,7 +333,7 @@
 </template>
 
 <script>
-import {useCounterStore} from "stores/example-store"
+import {globalStore} from "stores/example-store"
 import {date} from "quasar";
 import moment from 'moment'
 moment.locale('es')
@@ -343,7 +343,7 @@ export default {
     return{
       dialogSale:false,
       dialogProvider:false,
-      store: useCounterStore(),
+      store: globalStore(),
       colums:[
         {name:'Acciones',label:'Acciones',field:'Acciones',align:'center'},
         {name:'Fecha',label:'Fecha',field:'Fecha',align:'left'},

@@ -229,14 +229,14 @@
   </div>
 </template>
 <script>
-import {useCounterStore} from "stores/example-store";
+import {globalStore} from "stores/example-store";
 
 export default {
   name:`Login`,
   data(){
     return{
       tab:'login',
-      store:useCounterStore(),
+      store:globalStore(),
       user:{},
       email:'',
       password:'',

@@ -18,15 +18,20 @@
           <q-table dense :columns="colums" :rows="usuarios" hide-bottom flat bordered :rows-per-page-options="[0]">
             <template v-slot:body-cell-Acciones="props">
               <q-tr :props="props">
-                <q-td key="Acciones" auto-width :props="props">
-                  <q-icon name="o_delete" color="red" size="20px">
+                <q-td key="Acciones" auto-width :props="props" align="center">
+                  <q-icon name="o_delete" color="red" size="20px" @click="deluser(props.row.id)">
                     <q-tooltip>
                       Eliminar
                     </q-tooltip>
                   </q-icon>
-                  <q-icon name="o_edit" color="grey" size="20px">
+                  <q-icon name="o_edit" color="yellow" size="20px" @click="upuser(props.row)">
                     <q-tooltip>
                       Editar
+                    </q-tooltip>
+                  </q-icon>
+                  <q-icon name="key" color="cyan" size="20px" @click="uppass(props.row.id)">
+                    <q-tooltip>
+                      Password
                     </q-tooltip>
                   </q-icon>
                 </q-td>
@@ -183,6 +188,78 @@
           </q-card-section>
         </q-card>
       </q-dialog>
+      
+            <q-dialog v-model="dialogModUser" position="right" full-height :maximized="true">
+        <q-card style="width: 450px; max-width: 80vw;">
+          <q-card-section class="row items-center q-pb-none">
+            <div class="text-h6">Modificar Personal</div>
+            <q-space />
+            <q-btn icon="cancel" flat round dense v-close-popup />
+          </q-card-section>
+          <q-card-section class="row items-center no-wrap">
+            <q-form @submit.prevent="updateUser">
+              <div class="row">
+                <div class="col-12">
+                  <div class="text-caption text-bold">Los campos marcados con asterisco (<span class="text-red">*</span>) son obligatorios</div>
+                </div>
+                <div class="col-12">
+                  <div class="text-caption text-bold">Nombre completo <span class="text-red">*</span></div>
+                  <q-input dense outlined v-model="usuario2.name" label="Nombre Completo*" hint="Porfavor ingresar nombre " :rules="rule" required clearable counter>
+                    <template v-slot:prepend>
+                      <q-icon name="person_outline" />
+                    </template>
+                  </q-input>
+                </div>
+                <div class="col-12 ">
+                      <q-input dense outlined type="email" v-model="usuario2.email" label="Email*" hint="Porfavor ingresar email" :rules="rule" required readonly>
+                        <template v-slot:prepend>
+                          <q-icon name="email" />
+                        </template>
+                      </q-input>
+                    </div>
+
+
+                    <div class="col-12 ">
+                      <q-select
+                        dense
+                        outlined
+                        hint="Seleccionar una Perfil"
+                        v-model="usuario2.perfil"
+                        :options="profiles"
+                        label="Perfil de usuario *"
+                      >
+                        <template v-slot:option="scope">
+                          <q-item v-bind="scope.itemProps">
+                            <q-item-section avatar>
+                              <q-icon :name="scope.opt.icon" />
+                            </q-item-section>
+                            <q-item-section>
+                              <q-item-label>{{ scope.opt.label }}</q-item-label>
+                            </q-item-section>
+                          </q-item>
+                        </template>
+                        <template v-slot:prepend>
+                          <q-icon name="manage_accounts"/>
+                        </template>
+                      </q-select>
+                      </div>
+                <div class="col-12">
+                  <div class="text-caption">Fecha Limite (<span class="text-red">*</span>) </div>
+                  <q-input dense outlined v-model="usuario2.fechalimite" type="date" label="Fecha limite" clearable counter>
+                    <template v-slot:prepend>
+                      <q-icon name="event" />
+                    </template>
+                  </q-input>
+                </div>
+                <div class="col-12 q-py-md">
+                  <q-btn label="Modificar Usuario" no-caps color="warning"  class=" text-build text-black full-width" type="submit"/>
+                </div>
+              </div>
+            </q-form>
+          </q-card-section>
+        </q-card>
+      </q-dialog>
+
     </q-page>
   </div>
 </template>
@@ -197,7 +274,8 @@ export default {
   data(){
     return{
       isPwd:true,
-      dialogProfile:false,
+      dialogProfile:false, 
+      dialogModUser:false,
       lpermisos:[],
       dialogUser:false,
       dialogProvider:false,
@@ -215,6 +293,7 @@ export default {
       profiles:[],
       permisos:[],
       usuario:{fechalimite:date.formatDate(new Date(),'YYYY-MM-DD')},
+      usuario2:{},
       datologin:'',
       usuarios:[],
       rule:[
@@ -227,15 +306,94 @@ export default {
     }
   },
   mounted(){
+
+  },
+  created() {
     this.datologin=this.store.negocio.id
     console.log(this.datologin)
       this.listperfil();
       this.listusuarios();
   },
-  created() {
-
-  },
   methods:{
+  upuser(us){
+      console.log(us)
+      this.usuario2=us
+      this.profiles.forEach(r => {
+          if(r.id==this.usuario2.perfil_id)
+          this.usuario2.perfil=r
+        
+      });
+      this.dialogModUser=true
+    },
+    uppass(iduser){
+      this.$q.dialog({
+        title: 'PASSWORD',
+        message: 'Cual es la nueva Contraseña?',
+        prompt: {
+          model: '',
+          type: 'password' // optional
+        },
+        cancel: true,
+        persistent: false
+      }).onOk(data => {
+        // console.log('>>>> OK, received', data)
+      this.$api.post('uppassword',{id:iduser,password:data}).then(res=>{
+        
+      })
+
+      }).onCancel(() => {
+        // console.log('>>>> Cancel')
+      }).onDismiss(() => {
+        // console.log('I am triggered on both OK and Cancel')
+      })
+    },
+    deluser(iduser){
+      this.$q.dialog({
+        title: 'Eliminar Usuario',
+        message: 'Esta Seguro de Eliminar Registro?',
+        cancel: true,
+        persistent: false
+      }).onOk(() => {
+        // console.log('>>>> OK')
+      this.$api.delete('user/'+iduser).then(res=>{
+                        this.$q.notify({
+          message: 'Se ha eliminado',
+          color: 'green',
+          icon: 'info'
+        })
+      this.listusuarios();
+      })
+      }).onOk(() => {
+        // console.log('>>>> second OK catcher')
+      }).onCancel(() => {
+        // console.log('>>>> Cancel')
+      }).onDismiss(() => {
+        // console.log('I am triggered on both OK and Cancel')
+      })
+    },
+    updateUser(){
+            if(this.usuario2.perfil==undefined || this.usuario2.perfil=='')
+      {
+                this.$q.notify({
+          message: 'Seleccione Perfil',
+          color: 'red',
+          icon: 'error'
+        })
+        return false
+      }
+            this.$api.put('user/'+this.usuario2.id,this.usuario2).then(res=>{
+        this.dialogModUser=false
+        this.listusuarios()
+      }).catch(err => {
+        this.$q.loading.hide()
+        // console.log(err.response.data.errors)
+        this.$q.notify({
+          message: err.response.data.message,
+          color: 'red',
+          icon: 'error'
+        })
+      })
+    },
     createUser(){
       this.usuario.negocio_id=this.store.negocio.id
       if(this.usuario.perfil==undefined || this.usuario.perfil=='')

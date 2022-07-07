@@ -134,7 +134,7 @@ class UserController extends Controller
             'password' => 'required|confirmed|min:6',
         ]);
         $user=new User();
-        $user->name= $request->nombre;
+        $user->name= $request->name;
         $user->email=$request->email;
         $user->password=Hash::make( $request->password);
         $user->fechalimite=$request->fechalimite;
@@ -176,17 +176,14 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        $request->validate([
-            'email'=>'required|unique:users|email',
-        ]);
+
        // $user->update($request->all());
         $user=User::find($request->id);
         $user->name= $request->name;
-        $user->email=$request->email;
         //$user->password=Hash::make( $request->password);
         $user->fechalimite=$request->fechalimite;
         //$user->minegocio=$request->negocio_id;
-        $user->tipo=$request->perfil;
+        $user->perfil_id=$request->perfil["id"];
         $user->save();
 //        return response()->json([
 //            "user"=>$request->user(),
@@ -197,7 +194,7 @@ class UserController extends Controller
     public function uppassword(Request $request)
     {
         $request->validate([
-            'password' => 'required|confirmed|min:6',
+            'password' => 'required|min:6',
         ]);
        // $user->update($request->all());
         $user=User::find($request->id);
@@ -214,5 +211,8 @@ class UserController extends Controller
     public function destroy($id)
     {
         //
+        $user=User::find($id);
+        $user->delete();
+
     }
 }

@@ -35,7 +35,7 @@
 <script>
 import  "leaflet/dist/leaflet.css"
 import { LMap, LTileLayer, LMarker, LControl } from "@vue-leaflet/vue-leaflet";
-import {globalStore} from "stores/example-store";
+import {globalStore} from "stores/global";
 export default {
   components: {
     LMap,

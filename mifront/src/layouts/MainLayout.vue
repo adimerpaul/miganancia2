@@ -502,7 +502,7 @@
 
 <script>
 // import EssentialLink from 'components/EssentialLink.vue'
-import {globalStore} from "stores/example-store";
+import {globalStore} from "stores/global";
 import { LMap, LTileLayer, LMarker, LControl } from "@vue-leaflet/vue-leaflet";
 export default {
   name: 'MainLayout',

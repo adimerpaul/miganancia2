@@ -333,7 +333,7 @@
 </template>
 
 <script>
-import {globalStore} from "stores/example-store"
+import {globalStore} from "stores/global"
 import {date} from "quasar";
 import moment from 'moment'
 moment.locale('es')

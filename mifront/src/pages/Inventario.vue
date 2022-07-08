@@ -747,7 +747,8 @@
 </template>
 
 <script>
-import {globalStore} from "stores/example-store"
+import {globalStore} from "stores/global"
+import {useProductosStore} from "stores/productos";
 export default {
   name: `Inventario`,
   data(){
@@ -770,6 +771,7 @@ export default {
         id: 0
       },
       store:globalStore(),
+      productosStore:useProductosStore(),
       filterProducto:'',
       filterproductocategoria:'',
       ordenar:{label: 'Productos más vendidos',value: 'Productos más vendidos',icon:'list'},
@@ -779,8 +781,8 @@ export default {
         {label: 'Productos más rentables',value: 'Productos más rentables',icon:'list'},
         {label: 'Últimas unidades disponibles',value: 'Últimas unidades disponibles',icon:'list'},
       ],
-      productos:[],
-      productos2:[],
+      productos:useProductosStore().productos,
+      productos2:useProductosStore().productos2,
       producto:{},
       dialogDetalleProducto:false,
       dialogUpdateProducto:false,
@@ -800,10 +802,17 @@ export default {
       ],
     }
   },
+  mounted() {
+
+  },
   created() {
-    this.$q.loading.show()
+    if (!this.productosStore.singleton){
+      this.$q.loading.show()
+      this.misproductos()
+      this.productosStore.singleton= true
+    }
     this.miscategorias()
-    this.misproductos()
+
   },
   // mounteda() {
   //   // const bar = this.$refs.bar
@@ -1021,6 +1030,8 @@ export default {
     misproductos(){
       this.$api.get('producto').then(res=>{
         this.$q.loading.hide()
+        this.productosStore.productos=res.data
+        this.productosStore.productos2=res.data
         this.productos=res.data
         this.productos2=res.data
       }).catch(err=>{

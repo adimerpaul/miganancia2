@@ -7,6 +7,7 @@
           Personal
         </q-toolbar-title>
         <q-btn color="green" @click="clickProfile" :label="$q.screen.lt.md?'':'Nuevo Perfil'" class="q-ml-xs" icon="add_circle_outline" no-caps/>
+        <q-btn color="yellow" @click="clickmodProfile" :label="$q.screen.lt.md?'':'Mod Perfil'" class="q-ml-xs" icon="edit" no-caps/>
         <q-btn color="cyan" @click="clickUsuario" :label="$q.screen.lt.md?'':'Nuevo Usuario'" class="q-ml-xs" icon="add_circle_outline" no-caps/>
       </q-toolbar>
     </q-header>
@@ -75,22 +76,69 @@
                                 <ul v-for="listsub in sub.permisos" :key="listsub" style="list-style: none;">
                                     <li><q-checkbox dense v-model="lpermisos" :val="listsub.id" />  {{listsub.nombre}}</li>
                                 </ul>
-
-
                             </ul>
                         </ul>
                         <pre>{{lpermisos}}</pre>
                 </div>
-
                 <div class="col-12 q-py-md">
                   <q-btn label="Crear Perfil" no-caps color="warning"  class=" text-build text-black full-width" type="submit"/>
                 </div>
               </div>
             </q-form>
-
           </q-card-section>
         </q-card>
       </q-dialog>
+
+            <q-dialog v-model="dialogModProfile" position="right" full-height :maximized="true">
+        <q-card style="width: 450px; max-width: 80vw;">
+          <q-card-section class="row items-center q-pb-none"  style="border-bottom: 5px solid #F44336">
+            <div class="text-h6">
+              <q-avatar square  icon="local_atm" color="red-1" text-color="red" />
+              Modificar Perfil
+            </div>
+            <q-space />
+            <q-btn icon="cancel" flat round dense v-close-popup />
+          </q-card-section>
+          <q-card-section class="row items-center no-wrap">
+
+              <div class="row">
+                <div class="col-12">
+                  <div class="text-caption text-bold">Los campos marcados con asterisco (<span class="text-red">*</span>) son obligatorios</div>
+                </div>
+                <div class="col-12">
+                  <q-select square outlined v-model="profile" :options="profiles" label="Perfiles" @update:model-value="cargarperfil"/>
+                </div>
+                <div class="col-12">
+                  <q-input dense outlined type="text" v-model="profile.nombre" label="Nombre Perfil*" hint="Porfavor ingresar Nombre" :rules="rule" required>
+                    <template v-slot:prepend>
+                      <q-icon name="event" />
+                    </template>
+                  </q-input>
+                </div>
+
+                <div class="col-12">
+                  <div class="text-caption text-bold">Permisos <span class="text-red"></span></div>
+                        <ul v-for="val in permisos" :key="val" style="list-style: none;">
+                            <li><q-checkbox dense v-model="lpermisos" :val="val.id" />
+                             {{val.nombre}}</li>
+                            <ul v-for="sub in val.permisos " :key="sub" style="list-style: none;">
+                                <li><q-checkbox dense v-model="lpermisos" :val="sub.id" /> {{sub.nombre}}</li>
+                                <ul v-for="listsub in sub.permisos" :key="listsub" style="list-style: none;">
+                                    <li><q-checkbox dense v-model="lpermisos" :val="listsub.id" />  {{listsub.nombre}}</li>
+                                </ul>
+                            </ul>
+                        </ul>
+                        <pre>{{lpermisos}}</pre>
+                </div>
+                <div class="col-12 q-py-md">
+                  <q-btn label="Modificar Perfil" no-caps color="warning"  class=" text-build text-black full-width" @click="modperfil"/>
+                  <q-btn label="Eliminar Perfil" no-caps color="red"  class=" text-build text-black full-width" @click="delperfil"/>
+                </div>
+              </div>
+          </q-card-section>
+        </q-card>
+      </q-dialog>
+
 
       <q-dialog v-model="dialogUser" position="right" full-height :maximized="true">
         <q-card style="width: 450px; max-width: 80vw;">
@@ -275,6 +323,7 @@ export default {
     return{
       isPwd:true,
       dialogProfile:false, 
+      dialogModProfile:false,
       dialogModUser:false,
       lpermisos:[],
       dialogUser:false,
@@ -315,6 +364,56 @@ export default {
       this.listusuarios();
   },
   methods:{
+    modperfil(){
+      if(this.profile.id==undefined || this.profile.id==''){
+                        this.$q.notify({
+          message: 'Seleccione Perfil',
+          color: 'red',
+          icon: 'info'
+        })
+        return false
+      }
+    if(this.profile.nombre==undefined || this.profile.nombre==''){
+                              this.$q.notify({
+          message: 'ingrese el nombre',
+          color: 'red',
+          icon: 'info'
+        })
+        return false
+    }
+    this.profile.permisos=this.lpermisos
+      this.$api.put('profile/'+this.profile.id,this.profile).then(res=>{
+                                this.$q.notify({
+          message: 'MModificado correctamente',
+          color: 'green',
+          icon: 'info'
+        })
+        this.listperfil()
+        this.lpermisos=[]
+        this.dialogModProfile=false
+      })
+
+    },
+    delperfil(){
+            if(this.profile.id==undefined || this.profile.id==''){
+                        this.$q.notify({
+          message: 'Seleccione Perfil',
+          color: 'red',
+          icon: 'info'
+        })
+        return false
+      }
+      this.$api.delete('profile/'+this.profile.id).then(res=>{
+                                this.$q.notify({
+          message: 'Eliminado',
+          color: 'red',
+          icon: 'info'
+        })
+        this.lpermisos=[]
+        this.listperfil()
+        this.dialogModProfile=false
+      })
+    },
   upuser(us){
       console.log(us)
       this.usuario2=us
@@ -464,6 +563,7 @@ export default {
             this.profile={}
             this.dialogProfile=false
             this.listperfil();
+            this.lpermisos=[]
       })
 
     },
@@ -475,10 +575,25 @@ export default {
     clickProfile(){
       this.dialogProfile=true
       this.permisos=[]
+      this.lpermisos=[]
       this.usuario.perfil=''
       this.listapermisos()
 
       this.profile={}
+    },
+
+        clickmodProfile(){
+      this.dialogModProfile=true
+      this.permisos=[]
+      this.profile={label:''}     
+      this.listapermisos()
+    },
+    cargarperfil(){
+          this.lpermisos=[]
+      this.profile.permisos.forEach(r => {
+          if(r.pivot.estado==1)
+          this.lpermisos.push(r.pivot.permiso_id);
+      });
     },
 
         clickUsuario(){

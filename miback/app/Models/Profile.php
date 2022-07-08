@@ -14,6 +14,6 @@ class Profile extends Model
     ];
 
     public function permisos(){
-        return $this->belongsToMany(Permiso::class);
+        return $this->belongsToMany(Permiso::class)->withPivot('permiso_id','estado'); ;
     }
 }

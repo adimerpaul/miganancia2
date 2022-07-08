@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Profile;
 use App\Models\Permiso;
+use App\Models\User;
 use App\Http\Requests\StoreProfileRequest;
 use App\Http\Requests\UpdateProfileRequest;
 use Illuminate\Support\Facades\DB;
@@ -33,7 +34,7 @@ class ProfileController extends Controller
     }
 
     public function listaperfil(Request $request){
-        return Profile::where('negocio_id',$request->negocio_id)->get();
+        return Profile::with('permisos')->where('negocio_id',$request->negocio_id)->get();
     }
     /**
      * Store a newly created resource in storage.
@@ -96,10 +97,10 @@ class ProfileController extends Controller
         $profile->nombre=strtoupper($request->nombre);
         $profile->save();
 
-        DB::SELECT("UPDATE from permiso_profile set estado=0 where profile_id=$profile_id ");
+        DB::SELECT("UPDATE permiso_profile set estado=0 where profile_id=$request->id ");
 
         foreach ($request->permisos as $r) {
-            DB::SELECT("UPDATE from permiso_profile set estado=1 where profile_id=$profile_id and permiso_id=$r");
+            DB::SELECT("UPDATE permiso_profile set estado=1 where profile_id=$request->id and permiso_id=$r");
         }
     }
 
@@ -109,8 +110,14 @@ class ProfileController extends Controller
      * @param  \App\Models\Profile  $profile
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Profile $profile)
+    public function destroy($id)
     {
         //
+        $user=User::where('perfil_id',$id)->count();
+        if($user==0){
+        $profile=Profile::find($id);
+        DB::SELECT("DELETE from permiso_profile where profile_id=$id ");
+        $profile->delete();
+    }
     }
 }
